@@ -1,80 +1,318 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bahja Morocco | بهجة المغرب</title>
-<meta name="description" content="Bahja Morocco: a daily trip planner & driver safety assistant for Morocco. مخطط رحلات يومية ومساعد أمان القيادة للمغرب.">
-<style>
-:root { --bg:#0d0d0c; --panel:#1a1a18; --gold:#d4af37; --text:#ece7d8; --muted:#9a9584; --line:#3a3626; }
-* { box-sizing:border-box; }
-body { margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif; line-height:1.8; }
-main { max-width:680px; margin:0 auto; padding:56px 20px; }
-h1 { color:var(--gold); font-size:2rem; margin:0 0 4px; }
-h2 { color:var(--gold); font-size:1.4rem; margin:16px 0 8px; }
-p, li { margin:8px 0; }
-ul { padding-right:20px; padding-left:20px; }
-.box { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:16px 18px; margin:20px 0; }
-a { color:var(--gold); }
-a:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
-.muted { color:var(--muted); font-size:.9rem; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سياسة الخصوصية | Privacy Policy — Bahja Morocco Travel</title>
+  <meta name="description" content="سياسة الخصوصية لتطبيق Bahja Morocco Travel (بهجة) — Privacy Policy for the Bahja Morocco Travel app (Arabic & English)." />
+  <style>
+    :root { --bg:#0c1116; --surface:#151d24; --surface-alt:#1c2630; --gold:#d4af37; --gold-light:#f0d57c; --text:#e8e6df; --muted:#a9b1b8; --border:rgba(212,175,55,.25); }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:"Segoe UI",Tahoma,Arial,sans-serif; line-height:1.8; }
+    .container { max-width:860px; margin:0 auto; padding:24px 16px 60px; }
+    header { text-align:center; padding:24px 12px; border:1px solid var(--border); border-radius:16px; background:var(--surface); }
+    h1 { color:var(--gold); margin:8px 0 4px; font-size:1.9rem; }
+    .subtitle { color:var(--muted); margin:0 0 14px; }
+    .meta { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:16px; }
+    .meta span { background:var(--surface-alt); border:1px solid var(--border); border-radius:20px; padding:2px 12px; font-size:.85rem; color:var(--gold-light); }
+    .lang { display:flex; gap:10px; justify-content:center; }
+    .lang button { cursor:pointer; background:transparent; color:var(--gold); border:1px solid var(--gold); border-radius:10px; padding:8px 18px; font-size:1rem; font-weight:700; }
+    .lang button.active { background:var(--gold); color:#0c1116; }
+    section.policy { display:none; margin-top:20px; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:8px 22px 22px; }
+    section.policy.show { display:block; }
+    h2 { color:var(--gold); border-bottom:1px solid var(--border); padding-bottom:6px; margin-top:28px; font-size:1.25rem; }
+    h3 { color:var(--gold-light); margin-bottom:4px; font-size:1.05rem; }
+    p, li { color:var(--text); }
+    ul { padding-inline-start:22px; }
+    a { color:var(--gold-light); word-break:break-word; }
+    .callout { background:var(--surface-alt); border-inline-start:4px solid var(--gold); border-radius:8px; padding:10px 14px; margin:14px 0; }
+    table { width:100%; border-collapse:collapse; margin:10px 0; font-size:.92rem; display:block; overflow-x:auto; }
+    th, td { border:1px solid var(--border); padding:8px 10px; text-align:start; vertical-align:top; }
+    th { background:var(--surface-alt); color:var(--gold-light); }
+    footer { text-align:center; color:var(--muted); margin-top:24px; font-size:.85rem; }
+  </style>
 </head>
 <body>
-<main>
-  <div class="box" dir="rtl" lang="ar">
-    <h1>بهجة المغرب</h1>
-    <p>تطبيق أندرويد يصمم لك رحلة يومية في مدن المغرب حسب ميزانيتك ومدتك واهتماماتك، مع عرض الأماكن القريبة والطقس ومستلزمات السفر وأرقام الطوارئ، بالإضافة إلى نظام ذكي لمراقبة أمان السائق للتنبيه من النعاس والتشتت أثناء القيادة.</p>
-  </div>
+<div class="container">
+  <header>
+    <h1>Bahja Morocco Travel — بهجة</h1>
+    <p class="subtitle">سياسة الخصوصية &nbsp;•&nbsp; Privacy Policy</p>
+    <div class="meta">
+      <span>📅 2026-10-03</span>
+      <span>📧 morocobahia@gmail.com</span>
+    </div>
+    <div class="lang">
+      <button id="btn-ar" onclick="setLang('ar')">🇲🇦 العربية</button>
+      <button id="btn-en" onclick="setLang('en')">🇬🇧 English</button>
+    </div>
+  </header>
 
-  <div class="box" dir="ltr" lang="en">
-    <h1>Bahja Morocco</h1>
-    <p>An Android app that plans a daily trip in Moroccan cities around your budget, time, and interests, shows nearby places, weather, travel essentials, and emergency numbers, featuring a smart driver safety assistant to prevent drowsiness and distraction.</p>
-  </div>
+  <!-- ============================ ARABIC ============================ -->
+  <section id="policy-ar" class="policy" lang="ar" dir="rtl">
+    <h2>سياسة الخصوصية — تطبيق Bahja Morocco Travel (بهجة)</h2>
+    <p><strong>تاريخ السريان وآخر تحديث:</strong> 3 أكتوبر 2026</p>
+    <p>
+      توضح هذه السياسة كيف يتعامل تطبيق <strong>Bahja Morocco Travel</strong> («بهجة»، «نحن») مع المعلومات عند استخدامك للتطبيق على أندرويد
+      (معرّف الحزمة: <code>com.aistudio.bahjatravel2.kzmxpq</code>). باستخدامك التطبيق فإنك توافق على ما ورد هنا.
+    </p>
+    <div class="callout">
+      <strong>باختصار:</strong> نحن لا نبيع بياناتك. معظم بياناتك (المفضلة، الخطط، التقدّم، الرحلات المسجّلة) تبقى على هاتفك فقط.
+      التطبيق مجاني ويعرض إعلانات عبر <strong>Meta Audience Network (فيسبوك)</strong> التي قد تستخدم معرّف الإعلانات في جهازك.
+    </div>
 
-  <!-- Privacy Policy Section - Arabic -->
-  <div class="box" id="ar" dir="rtl" lang="ar">
-    <h2>سياسة الخصوصية</h2>
-    <p>نحن نحترم خصوصية مستخدمينا. يوضح هذا المستند كيفية التعامل مع البيانات في تطبيق <strong>بهجة المغرب (Bahja Morocco)</strong>:</p>
-    
-    <p><strong>1. البيانات التي نجمعها ونعالجها:</strong></p>
+    <h2>1. البيانات التي نتعامل معها</h2>
+    <h3>أ) بيانات تبقى على جهازك فقط</h3>
     <ul>
-      <li><strong>الموقع الجغرافي (Precise & Approximate Location):</strong> يُستخدم لتحديد الأماكن القريبة، تخطيط المسارات والرحلات، وإظهار الإعلانات ذات الصلة.</li>
-      <li><strong>معرّفات الجهاز والأرقام التعريفية الأخرى (Device or other IDs):</strong> نستخدم معرّفات الإعلانات الخاصة بالجهاز لتشغيل وعرض الإعلانات عبر شبكة إعلانات فيسبوك (Meta Audience Network) وتحسين أداء التطبيق.</li>
+      <li>الأماكن المفضلة، وخطط الرحلات اليومية المحفوظة، وتقدّم القراءة في المكتبة، ونقاط المستكشف (XP) وجواز السفر.</li>
+      <li>إعدادات التطبيق: اللغة، العملة، الميزانية اليومية، الوضع الداكن، وخيارات الإشعارات.</li>
+      <li>بيانات الملف الشخصي إن سجّلت الدخول (الاسم، البريد، الهاتف، الصورة): تُحفظ <strong>محلياً على جهازك</strong> ولا نملك خادماً لحسابات المستخدمين.</li>
+      <li>تسجيل الرحلات (اختياري): إن فعّلته بموافقتك، يحفظ التطبيق مسار رحلاتك والأماكن التي تزورها <strong>على جهازك فقط</strong> لإنشاء «شهادة المسافر». يمكنك إيقافه أو حذف بياناته في أي وقت.</li>
     </ul>
 
-    <p><strong>2. أسباب جمع البيانات واستخدامها:</strong></p>
+    <h3>ب) الموقع الجغرافي</h3>
+    <p>
+      بعد إذنك، يستخدم التطبيق موقعك الدقيق أو التقريبي <strong>أثناء استخدام التطبيق فقط</strong> (وليس في الخلفية) لعرض الأماكن القريبة، وحساب المسافات،
+      وتشغيل الخريطة والملاحة. لا نخزّن موقعك على خوادمنا. لكن بعض الميزات ترسل إحداثيات إلى خدمات خارجية لتعمل (انظر القسم 3).
+    </p>
+
+    <h3>ج) الكاميرا — ميزة مراقبة السائق</h3>
+    <p>
+      عند تشغيلك ميزة «مراقبة السائق» فقط وبعد إذنك الصريح، تُستخدم الكاميرا الأمامية لتحليل فتح/إغلاق العينين واتجاه الوجه <strong>لحظياً داخل جهازك</strong>
+      (بتقنية ML Kit على الجهاز) لتنبيهك عند النعاس أو التشتت. <strong>لا يتم تسجيل أو حفظ أو إرسال أي صورة أو فيديو.</strong>
+      تعمل الميزة بخدمة مقدّمة (Foreground Service) مع إشعار ظاهر، ويُستخدم إذن «العرض فوق التطبيقات الأخرى» لإظهار التنبيهات فقط.
+    </p>
+
+    <h3>د) بيانات تُرسل إلى جهات خارجية</h3>
     <ul>
-      <li>تقديم وظائف التطبيق الأساسية (مثل الملاحة وتعيين المسارات).</li>
-      <li>عرض الإعلانات والتسويق عبر شبكات الإعلانات الخارجية المعتمدة (Meta Audience Network).</li>
+      <li><strong>البريد الإلكتروني للتنبيهات (اختياري):</strong> إن أدخلت بريدك للاشتراك في التنبيهات والعروض، يُرسل إلى خدمة Google Apps Script ويُحفظ في جدول Google Sheets يملكه المطوّر. عند حذف الحساب من التطبيق يُرسل طلب حذف مع بريدك لحذفه من القائمة.</li>
+      <li><strong>الذكاء الاصطناعي (Google Gemini):</strong> عند إنشاء خطة رحلة أو استخدام المساعد، تُرسل النصوص المطلوبة (المدينة، الميزانية، التفضيلات، وسؤالك) إلى واجهة Google Gemini لتوليد الرد. لا تكتب معلومات شخصية حساسة في المحادثة.</li>
+      <li><strong>الإعلانات (Meta Audience Network):</strong> انظر القسم 2.</li>
     </ul>
 
-    <p><strong>3. مشاركة البيانات:</strong></p>
-    <p>قد يتم مشاركة معرّفات الجهاز والموقع الجغرافي مع شركائنا في مجال الإعلانات (مثل Meta / Facebook) لأغراض عرض الإعلانات المستهدفة وتتبع أداء الحملات الإعلانية فقط.</p>
-  </div>
-
-  <!-- Privacy Policy Section - English -->
-  <div class="box" id="en" dir="ltr" lang="en">
-    <h2>Privacy Policy</h2>
-    <p>We respect your privacy. This section outlines our data handling practices for <strong>Bahja Morocco</strong>:</p>
-    
-    <p><strong>1. Data Collection & Processing:</strong></p>
+    <h2>2. الإعلانات — Meta Audience Network (Facebook SDK)</h2>
+    <p>
+      لإبقاء التطبيق مجانياً نعرض إعلاناً شريطياً (Banner) وإعلاناً بينياً (Interstitial) وإعلان فيديو بمكافأة، عبر <strong>Meta Audience Network</strong>.
+      قد تقوم Meta وشركاؤها تلقائياً بجمع ومعالجة: <strong>معرّف الإعلانات (Advertising ID / GAID)</strong>، عنوان IP، معلومات الجهاز والنظام
+      (الطراز، إصدار أندرويد، اللغة، الشاشة، شركة الاتصالات)، وبيانات التفاعل مع الإعلان (المشاهدات والنقرات) — لعرض إعلانات مخصّصة أو غير مخصّصة، وقياس الأداء، ومنع الاحتيال.
+    </p>
     <ul>
-      <li><strong>Location Data (Precise & Approximate):</strong> Used to calculate trips, display nearby attractions, route guidance, and deliver relevant advertisements.</li>
-      <li><strong>Device or other IDs (e.g., Advertising ID):</strong> Collected and shared with third-party ad networks, specifically <strong>Meta Audience Network (Facebook Ads)</strong>, to serve personalized ads and measure performance.</li>
+      <li><strong>الاتحاد الأوروبي والمملكة المتحدة وسويسرا:</strong> لا تُطلب الإعلانات إلا بعد موافقتك الصريحة، ويمكنك تغيير اختيارك في أي وقت من: الإعدادات ← الخصوصية وخيارات الإعلانات.</li>
+      <li>يمكنك إعادة ضبط معرّف الإعلانات أو إيقاف تخصيص الإعلانات من إعدادات أندرويد (Google ← الإعلانات).</li>
+      <li>سياسة خصوصية Meta: <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener noreferrer">https://www.facebook.com/privacy/policy/</a></li>
+      <li>تفضيلات الإعلانات في Meta: <a href="https://www.facebook.com/settings?tab=ads" target="_blank" rel="noopener noreferrer">https://www.facebook.com/settings?tab=ads</a></li>
+      <li>تُمنح مكافأة الفيديو (إعفاء من الإعلانات البينية لفترة محدّدة) فقط بعد إتمام مشاهدة الإعلان.</li>
     </ul>
 
-    <p><strong>2. Purposes of Data Usage:</strong></p>
+    <h2>3. الخدمات الخارجية التي يستخدمها التطبيق</h2>
+    <p>عند استخدام الميزات التالية، يتصل جهازك بهذه الجهات وتستقبل عنوان IP وما يلزم لتنفيذ الطلب. لكل جهة سياسة خصوصية مستقلة:</p>
+    <table>
+      <tr><th>الخدمة</th><th>الغرض</th><th>ما قد يُرسل</th></tr>
+      <tr><td>Meta Audience Network</td><td>الإعلانات</td><td>معرّف الإعلانات، IP، بيانات الجهاز، تفاعل الإعلان</td></tr>
+      <tr><td>Google Gemini API</td><td>خطط الرحلات والمساعد الذكي</td><td>نص الطلب (مدينة، ميزانية، تفضيلات، أسئلة)</td></tr>
+      <tr><td>Google Play Services / Play Review</td><td>خدمات الموقع وتقييم التطبيق وتسجيل الدخول بحساب Google</td><td>حسب سياسة Google</td></tr>
+      <tr><td>Google Sheets / Apps Script</td><td>تحديث الأماكن والتنبيهات، واشتراك البريد</td><td>IP؛ والبريد إن اشتركت</td></tr>
+      <tr><td>OpenStreetMap (الخرائط، Nominatim) و Overpass</td><td>عرض الخريطة والبحث عن أماكن</td><td>نص البحث وإحداثيات منطقة الخريطة</td></tr>
+      <tr><td>OSRM (Project OSRM)</td><td>حساب مسار القيادة</td><td>إحداثيات نقطة البداية والوجهة</td></tr>
+      <tr><td>Open-Meteo</td><td>حالة الطقس</td><td>إحداثيات الموقع</td></tr>
+      <tr><td>Mapillary</td><td>صور الشوارع</td><td>إحداثيات المكان المعروض</td></tr>
+      <tr><td>Pexels / Unsplash / Wikimedia</td><td>صور الأماكن</td><td>اسم المكان كنص بحث</td></tr>
+    </table>
+    <p>
+      روابط: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google</a> •
+      <a href="https://wiki.osmfoundation.org/wiki/Privacy_Policy" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> •
+      <a href="https://open-meteo.com/en/terms" target="_blank" rel="noopener noreferrer">Open-Meteo</a> •
+      <a href="https://www.pexels.com/privacy-policy/" target="_blank" rel="noopener noreferrer">Pexels</a> •
+      <a href="https://unsplash.com/privacy" target="_blank" rel="noopener noreferrer">Unsplash</a> •
+      <a href="https://www.mapillary.com/privacy" target="_blank" rel="noopener noreferrer">Mapillary</a>
+    </p>
+
+    <h2>4. الأذونات التي يطلبها التطبيق</h2>
     <ul>
-      <li>App Functionality & Navigation.</li>
-      <li>Advertising & Marketing services.</li>
+      <li><strong>الموقع (دقيق/تقريبي):</strong> الأماكن القريبة والخريطة والملاحة.</li>
+      <li><strong>الكاميرا:</strong> مراقبة السائق فقط (معالجة محلية دون حفظ).</li>
+      <li><strong>الإشعارات:</strong> التنبيهات وإشعار خدمة مراقبة السائق.</li>
+      <li><strong>العرض فوق التطبيقات الأخرى:</strong> تنبيهات مراقبة السائق أثناء القيادة.</li>
+      <li><strong>الإنترنت وحالة الشبكة، وإيقاظ الجهاز، والاهتزاز:</strong> تشغيل الخرائط والخدمات والتنبيهات.</li>
+      <li><strong>معرّف الإعلانات (AD_ID):</strong> للإعلانات كما في القسم 2.</li>
+    </ul>
+    <p>يمكنك سحب أي إذن في أي وقت من إعدادات الهاتف، وقد تتوقف الميزة المرتبطة به.</p>
+
+    <h2>5. المشاركة عبر التطبيقات الأخرى</h2>
+    <p>
+      يمكنك مشاركة الأماكن أو الشهادة عبر واتساب أو فيسبوك أو إنستغرام أو تيليغرام أو X. تتم المشاركة بضغطتك أنت عبر نظام أندرويد،
+      ويتحقق التطبيق فقط من وجود هذه التطبيقات على جهازك لإظهار أزرار المشاركة. تخضع المحتويات المشاركة لسياسات تلك التطبيقات.
+    </p>
+
+    <h2>6. الاحتفاظ بالبيانات وحذفها</h2>
+    <ul>
+      <li>البيانات المحلية تبقى على جهازك حتى تحذفها أو تحذف التطبيق.</li>
+      <li>من الملف الشخصي ← «حذف الحساب/البيانات» يُمسح كل ما هو محلي (قواعد البيانات والتفضيلات والملفات والذاكرة المؤقتة)، ويُرسَل طلب حذف لبريدك من قائمة التنبيهات إن كنت مشتركاً.</li>
+      <li>يمكنك أيضاً مراسلتنا على <a href="mailto:morocobahia@gmail.com">morocobahia@gmail.com</a> لطلب حذف بريدك من قائمتنا.</li>
+      <li>قد يحفظ نظام أندرويد نسخاً احتياطية من إعدادات التطبيق ضمن حسابك في Google حسب إعدادات هاتفك.</li>
     </ul>
 
-    <p><strong>3. Data Sharing:</strong></p>
-    <p>We do not sell your personal data. Device identifiers and location details are processed securely by our trusted advertising partner (Meta) solely for advertising and analytic purposes.</p>
-  </div>
+    <h2>7. حقوقك</h2>
+    <p>
+      بحسب قوانين بلدك (مثل اللائحة الأوروبية GDPR، وقانون كاليفورنيا CCPA، والقانون المغربي رقم 09-08 لحماية المعطيات الشخصية)، لك الحق في الاطلاع على بياناتك وتصحيحها وحذفها،
+      وسحب الموافقة، والاعتراض على المعالجة. نحن <strong>لا نبيع</strong> المعلومات الشخصية. للممارسة حقوقك راسلنا على البريد أدناه.
+      يمكن للمقيمين في المغرب التواصل أيضاً مع اللجنة الوطنية لمراقبة حماية المعطيات ذات الطابع الشخصي (CNDP).
+    </p>
 
-  <p class="muted" dir="ltr">Contact: <a href="mailto:morocobahia@gmail.com">morocobahia@gmail.com</a></p>
-</main>
+    <h2>8. الأطفال</h2>
+    <p>التطبيق غير موجّه للأطفال دون 13 سنة (أو دون 16 في بعض دول الاتحاد الأوروبي)، ولا نجمع عمداً بيانات منهم. إن علمتَ أن طفلاً قدّم بيانات فراسلنا لنحذفها.</p>
+
+    <h2>9. الأمان</h2>
+    <p>نعتمد على اتصالات مشفّرة (HTTPS) كلما أمكن، ونُبقي بياناتك الأساسية على جهازك. لا توجد وسيلة نقل أو تخزين آمنة بنسبة 100%.</p>
+
+    <h2>10. التحديثات على السياسة</h2>
+    <p>قد نحدّث هذه السياسة، وسنعرض تاريخ آخر تحديث في أعلاها. استمرارك في استخدام التطبيق بعد التحديث يعني قبولك له.</p>
+
+    <h2>11. اتصل بنا</h2>
+    <p>📧 <a href="mailto:morocobahia@gmail.com">morocobahia@gmail.com</a></p>
+  </section>
+
+  <!-- ============================ ENGLISH ============================ -->
+  <section id="policy-en" class="policy" lang="en" dir="ltr">
+    <h2>Privacy Policy — Bahja Morocco Travel</h2>
+    <p><strong>Effective &amp; last updated:</strong> October 3, 2026</p>
+    <p>
+      This Privacy Policy explains how <strong>Bahja Morocco Travel</strong> ("Bahja", "we", "us") handles information when you use our Android app
+      (package: <code>com.aistudio.bahjatravel2.kzmxpq</code>). By using the app you agree to this policy.
+    </p>
+    <div class="callout">
+      <strong>In short:</strong> we do not sell your data. Most of your data (favorites, plans, progress, recorded trips) stays on your phone only.
+      The app is free and shows ads through <strong>Meta Audience Network (Facebook)</strong>, which may use your device's advertising ID.
+    </div>
+
+    <h2>1. Information we handle</h2>
+    <h3>A) Data that stays on your device only</h3>
+    <ul>
+      <li>Favorite places, saved daily itineraries, library reading progress, Explorer XP and passport.</li>
+      <li>App settings: language, currency, daily budget, dark mode, notification choices.</li>
+      <li>Profile details if you sign in (name, email, phone, photo) are stored <strong>locally on your device</strong>; we do not operate a user-account server.</li>
+      <li>Trip recording (optional): if you enable it with your consent, the app saves your trip paths and visited places <strong>on your device only</strong> to build your "Traveler Certificate". You can turn it off or erase it at any time.</li>
+    </ul>
+
+    <h3>B) Location</h3>
+    <p>
+      With your permission, the app uses your precise or approximate location <strong>only while you use the app</strong> (not in the background) to show nearby places,
+      calculate distances, and power the map and navigation. We do not store your location on our servers. However, some features send coordinates to third-party services in order to work (see Section 3).
+    </p>
+
+    <h3>C) Camera — Driver Monitor feature</h3>
+    <p>
+      Only when you turn on "Driver Monitor" and grant camera permission, the front camera is used to analyze eye openness and head direction <strong>in real time on your device</strong>
+      (on-device ML Kit) to alert you if you are drowsy or distracted. <strong>No photo or video is recorded, saved, or sent anywhere.</strong>
+      The feature runs as a foreground service with a visible notification; the "display over other apps" permission is used only to show alerts.
+    </p>
+
+    <h3>D) Data sent to third parties</h3>
+    <ul>
+      <li><strong>Email for alerts (optional):</strong> if you enter your email to receive alerts and offers, it is sent to a Google Apps Script endpoint and stored in a Google Sheet owned by the developer. When you delete your account in the app, a deletion request with your email is sent so it can be removed.</li>
+      <li><strong>AI (Google Gemini):</strong> when you generate a trip plan or use the assistant, the text needed (city, budget, preferences, your question) is sent to the Google Gemini API to generate the answer. Please do not type sensitive personal information in the chat.</li>
+      <li><strong>Advertising (Meta Audience Network):</strong> see Section 2.</li>
+    </ul>
+
+    <h2>2. Advertising — Meta Audience Network (Facebook SDK)</h2>
+    <p>
+      To keep the app free we show a Banner ad, an Interstitial ad, and a Rewarded Video ad through <strong>Meta Audience Network</strong>.
+      Meta and its partners may automatically collect and process: your <strong>Advertising ID (GAID)</strong>, IP address, device and system information
+      (model, Android version, language, screen, carrier), and ad interaction data (impressions, clicks) to deliver personalized or non-personalized ads, measure performance, and prevent fraud.
+    </p>
+    <ul>
+      <li><strong>EEA, UK and Switzerland:</strong> ad requests are made only after your explicit consent. You can change your choice anytime in Settings → Privacy &amp; Ads Choices.</li>
+      <li>You can reset your advertising ID or opt out of ad personalization in Android settings (Google → Ads).</li>
+      <li>Meta Privacy Policy: <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener noreferrer">https://www.facebook.com/privacy/policy/</a></li>
+      <li>Meta ad preferences: <a href="https://www.facebook.com/settings?tab=ads" target="_blank" rel="noopener noreferrer">https://www.facebook.com/settings?tab=ads</a></li>
+      <li>The rewarded-video benefit (a period free of interstitial ads) is granted only after the ad is watched to completion.</li>
+    </ul>
+
+    <h2>3. Third-party services used by the app</h2>
+    <p>When you use the features below, your device connects to these providers, which receive your IP address and what is needed to fulfil the request. Each has its own privacy policy:</p>
+    <table>
+      <tr><th>Service</th><th>Purpose</th><th>What may be sent</th></tr>
+      <tr><td>Meta Audience Network</td><td>Advertising</td><td>Advertising ID, IP, device data, ad interaction</td></tr>
+      <tr><td>Google Gemini API</td><td>Trip plans &amp; AI assistant</td><td>Request text (city, budget, preferences, questions)</td></tr>
+      <tr><td>Google Play Services / Play Review</td><td>Location services, in-app rating, Google sign-in</td><td>As per Google's policy</td></tr>
+      <tr><td>Google Sheets / Apps Script</td><td>Places &amp; alerts updates, email subscription</td><td>IP; email if you subscribe</td></tr>
+      <tr><td>OpenStreetMap (tiles, Nominatim) &amp; Overpass</td><td>Map display and place search</td><td>Search text and map-area coordinates</td></tr>
+      <tr><td>OSRM (Project OSRM)</td><td>Driving routes</td><td>Start and destination coordinates</td></tr>
+      <tr><td>Open-Meteo</td><td>Weather</td><td>Location coordinates</td></tr>
+      <tr><td>Mapillary</td><td>Street-level imagery</td><td>Coordinates of the displayed place</td></tr>
+      <tr><td>Pexels / Unsplash / Wikimedia</td><td>Place photos</td><td>Place name as search text</td></tr>
+    </table>
+    <p>
+      Links: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google</a> •
+      <a href="https://wiki.osmfoundation.org/wiki/Privacy_Policy" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> •
+      <a href="https://open-meteo.com/en/terms" target="_blank" rel="noopener noreferrer">Open-Meteo</a> •
+      <a href="https://www.pexels.com/privacy-policy/" target="_blank" rel="noopener noreferrer">Pexels</a> •
+      <a href="https://unsplash.com/privacy" target="_blank" rel="noopener noreferrer">Unsplash</a> •
+      <a href="https://www.mapillary.com/privacy" target="_blank" rel="noopener noreferrer">Mapillary</a>
+    </p>
+
+    <h2>4. Permissions the app requests</h2>
+    <ul>
+      <li><strong>Location (precise/approximate):</strong> nearby places, map and navigation.</li>
+      <li><strong>Camera:</strong> Driver Monitor only (on-device processing, nothing saved).</li>
+      <li><strong>Notifications:</strong> alerts and the Driver Monitor service notification.</li>
+      <li><strong>Display over other apps:</strong> Driver Monitor alerts while driving.</li>
+      <li><strong>Internet &amp; network state, wake lock, vibration:</strong> maps, services and alerts.</li>
+      <li><strong>Advertising ID (AD_ID):</strong> advertising as described in Section 2.</li>
+    </ul>
+    <p>You can revoke any permission at any time in your phone settings; the related feature may stop working.</p>
+
+    <h2>5. Sharing through other apps</h2>
+    <p>
+      You can share places or your certificate via WhatsApp, Facebook, Instagram, Telegram or X. Sharing happens only when you tap, through Android's share sheet.
+      The app only checks whether these apps are installed in order to show share buttons. Shared content is governed by those apps' policies.
+    </p>
+
+    <h2>6. Retention and deletion</h2>
+    <ul>
+      <li>Local data stays on your device until you delete it or uninstall the app.</li>
+      <li>Profile → "Delete account/data" erases all local data (databases, preferences, files, caches) and sends a deletion request for your email from the alerts list if you subscribed.</li>
+      <li>You can also email <a href="mailto:morocobahia@gmail.com">morocobahia@gmail.com</a> to ask us to remove your email from our list.</li>
+      <li>Android may back up app settings to your Google account depending on your phone's backup settings.</li>
+    </ul>
+
+    <h2>7. Your rights</h2>
+    <p>
+      Depending on your country's laws (e.g., EU GDPR, UK GDPR, California CCPA, Moroccan Law 09-08), you may have the right to access, correct and delete your data,
+      withdraw consent, and object to processing. We <strong>do not sell</strong> personal information. To exercise your rights, email us at the address below.
+      Residents of Morocco may also contact the CNDP (National Commission for the Control of Personal Data Protection).
+    </p>
+
+    <h2>8. Children</h2>
+    <p>The app is not directed to children under 13 (or under 16 in some EU countries) and we do not knowingly collect their data. If you believe a child has provided data, contact us and we will delete it.</p>
+
+    <h2>9. Security</h2>
+    <p>We use encrypted connections (HTTPS) where possible and keep your core data on your device. No method of transmission or storage is 100% secure.</p>
+
+    <h2>10. Changes to this policy</h2>
+    <p>We may update this policy; the last-updated date appears at the top. Continued use of the app after an update means you accept it.</p>
+
+    <h2>11. Contact us</h2>
+    <p>📧 <a href="mailto:morocobahia@gmail.com">morocobahia@gmail.com</a></p>
+  </section>
+
+  <footer>© 2026 Bahja Morocco Travel</footer>
+</div>
+
+<script>
+  function setLang(l) {
+    document.documentElement.lang = l;
+    document.documentElement.dir = (l === 'ar') ? 'rtl' : 'ltr';
+    ['ar', 'en'].forEach(function (x) {
+      document.getElementById('policy-' + x).classList.toggle('show', x === l);
+      document.getElementById('btn-' + x).classList.toggle('active', x === l);
+    });
+    try { history.replaceState(null, '', '#' + l); } catch (e) {}
+  }
+  (function () {
+    var h = (location.hash || '').replace('#', '');
+    var l = (h === 'en' || h === 'ar') ? h : ((navigator.language || 'ar').toLowerCase().indexOf('ar') === 0 ? 'ar' : 'en');
+    setLang(l);
+  })();
+</script>
 </body>
 </html>

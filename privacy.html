@@ -1,1967 +1,318 @@
-package com.example.ui.screens
-
-import android.app.Activity
-import android.net.Uri
-import android.widget.Toast
-import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.automirrored.filled.OpenInNew
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil.compose.rememberAsyncImagePainter
-import com.example.BuildConfig
-import com.example.data.model.AdminNotification
-import com.example.ui.components.GlassmorphicCard
-import com.example.ui.components.MoroccanOrnamentalDivider
-import com.example.ui.theme.*
-import com.example.ui.viewmodel.TravelViewModel
-import java.io.File
-import java.io.FileOutputStream
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun ProfileScreen(
-    viewModel: TravelViewModel
-) {
-    val context = LocalContext.current
-    val userName by viewModel.userName.collectAsState()
-    val userEmail by viewModel.userEmail.collectAsState()
-    val userPhoto by viewModel.userPhoto.collectAsState()
-    val userPhone by viewModel.userPhone.collectAsState()
-    val authProvider by viewModel.authProvider.collectAsState()
-    val appLanguage by viewModel.appLanguage.collectAsState()
-    val appCurrency by viewModel.appCurrency.collectAsState()
-
-    val isDefaultOrGuest = userName.isNullOrBlank() ||
-            userName.equals("Guest Guide", ignoreCase = true) ||
-            userName.equals("Guest", ignoreCase = true)
-    val resolvedProfileName = if (isDefaultOrGuest) {
-        if (appLanguage == "ar") "زائر بهجة" else "Bahja Guest"
-    } else {
-        userName!!.trim()
-    }
-
-    var showLanguagesDialog by remember { mutableStateOf(false) }
-    var showCurrencyDialog by remember { mutableStateOf(false) }
-    var showPhotoOptions by remember { mutableStateOf(false) }
-    var showDeleteConfirmation by remember { mutableStateOf(false) }
-    var showDeleteAccountConfirm by remember { mutableStateOf(false) }
-    var showPrivacyPolicyDialog by remember { mutableStateOf(false) }
-    var showTermsDialog by remember { mutableStateOf(false) }
-    var showDataSafetyDialog by remember { mutableStateOf(false) }
-    var showEditNameDialog by remember { mutableStateOf(false) }
-    var tempNameInput by remember { mutableStateOf("") }
-
-    val isUserInEeaRegion by com.example.consent.ConsentManager.isUserInEeaOrUk.collectAsState()
-    val consentStatus by com.example.consent.ConsentManager.consentStatus.collectAsState()
-    val adFreeRemainingSeconds by com.example.ads.FacebookAdsManager.adFreeRemainingSeconds.collectAsState()
-    var showConsentDialogInProfile by remember { mutableStateOf(false) }
-
-    val isAnyProfileDialogOpen = showLanguagesDialog || showCurrencyDialog || showPhotoOptions ||
-            showDeleteConfirmation || showDeleteAccountConfirm || showPrivacyPolicyDialog ||
-            showTermsDialog || showDataSafetyDialog || showEditNameDialog || showConsentDialogInProfile
-
-    BackHandler(enabled = isAnyProfileDialogOpen) {
-        showLanguagesDialog = false
-        showCurrencyDialog = false
-        showPhotoOptions = false
-        showDeleteConfirmation = false
-        showDeleteAccountConfirm = false
-        showPrivacyPolicyDialog = false
-        showTermsDialog = false
-        showDataSafetyDialog = false
-        showEditNameDialog = false
-        showConsentDialogInProfile = false
-    }
-
-    // Multi-Language Strings
-    val profileTitle = when (appLanguage) {
-        "ar" -> "الملف الشخصي"
-        "fr" -> "Profil Voyageur"
-        else -> "Noble Traveler"
-    }
-
-    val settingsLabel = when (appLanguage) {
-        "ar" -> "الإعدادات الفاخرة"
-        "fr" -> "Paramètres de Luxe"
-        else -> "Luxury Settings"
-    }
-
-    val preferredLanguageTitle = when (appLanguage) {
-        "ar" -> "اللغة المفضلة"
-        "fr" -> "Langue Préférée"
-        else -> "Preferred Language"
-    }
-
-    val currencyTitle = when (appLanguage) {
-        "ar" -> "العملة"
-        "fr" -> "Devise"
-        else -> "Currency"
-    }
-
-    val pushNotificationsTitle = when (appLanguage) {
-        "ar" -> "التنبيهات الهاتفية"
-        "fr" -> "Notifications Push"
-        else -> "Push Notifications"
-    }
-
-    val pushNotificationsSubtitle = when (appLanguage) {
-        "ar" -> "تلقي ترشيحات ومعلومات يومية مخصصة عن المغرب"
-        "fr" -> "Recevoir des suggestions quotidiennes sur le Maroc"
-        else -> "Receive curated daily Moroccan suggestions"
-    }
-
-    val infoSectionTitle = when (appLanguage) {
-        "ar" -> "المعلومات القانونية"
-        "fr" -> "INFORMATIONS"
-        else -> "INFORMATION"
-    }
-
-    val privacyPolicyTitle = when (appLanguage) {
-        "ar" -> "سياسة الخصوصية"
-        "fr" -> "Politique de Confidentialité"
-        else -> "Privacy Policy"
-    }
-
-    val termsTitle = when (appLanguage) {
-        "ar" -> "شروط الخدمة"
-        "fr" -> "Conditions d'Utilisation"
-        else -> "Terms of Service"
-    }
-
-    val dataSafetyTitle = when (appLanguage) {
-        "ar" -> "سياسة أمان البيانات"
-        "fr" -> "Sécurité des Données"
-        else -> "Data Safety Policy"
-    }
-
-    val logoutText = when (appLanguage) {
-        "ar" -> "تسجيل الخروج"
-        "fr" -> "Se Déconnecter"
-        else -> "Logout"
-    }
-
-    val deleteAccountText = when (appLanguage) {
-        "ar" -> "حذف الحساب"
-        "fr" -> "Supprimer le Compte"
-        "es" -> "Eliminar la Cuenta"
-        "de" -> "Konto Löschen"
-        "it" -> "Elimina Account"
-        else -> "Delete Account"
-    }
-
-    val profileDesc = when (appLanguage) {
-        "ar" -> "خصص تفضيلات رحلتك المغربية الأصيلة"
-        "fr" -> "Personnalisez vos préférences de voyage au Maroc"
-        else -> "Tailor your authentic journey preferences"
-    }
-
-    val premiumMemberText = when (appLanguage) {
-        "ar" -> "👑 عضو متميز"
-        "fr" -> "👑 Membre Premium"
-        else -> "👑 Premium Member"
-    }
-
-    val chooseLangTitle = when (appLanguage) {
-        "ar" -> "اختر اللغة"
-        "fr" -> "Choisir la Langue"
-        else -> "Choose Language"
-    }
-
-    val chooseCurrencyTitle = when (appLanguage) {
-        "ar" -> "اختر العملة"
-        "fr" -> "Choisir la Devise"
-        else -> "Choose Currency"
-    }
-
-    val profilePhotoTitle = when (appLanguage) {
-        "ar" -> "الصورة الشخصية"
-        "fr" -> "Photo de Profil"
-        else -> "Profile Photo"
-    }
-
-    val profilePhotoDesc = when (appLanguage) {
-        "ar" -> "اختر إجراءً لصورتك الشخصية كمسافر."
-        "fr" -> "Choisissez une action pour votre photo de profil."
-        else -> "Choose an action for your traveler profile photo."
-    }
-
-    val uploadPhotoText = when (appLanguage) {
-        "ar" -> "تحميل صورة جديدة"
-        "fr" -> "Télécharger une nouvelle photo"
-        else -> "Upload New Photo"
-    }
-
-    val removePhotoText = when (appLanguage) {
-        "ar" -> "إزالة الصورة"
-        "fr" -> "Supprimer la photo"
-        else -> "Remove Photo"
-    }
-
-    val removeConfirmTitle = when (appLanguage) {
-        "ar" -> "إزالة الصورة؟"
-        "fr" -> "Supprimer la photo ?"
-        else -> "Remove Photo?"
-    }
-
-    val removeConfirmDesc = when (appLanguage) {
-        "ar" -> "هل أنت متأكد من رغبتك في حذف صورتك الشخصية والعودة للأيقونة الافتراضية؟"
-        "fr" -> "Êtes-vous sûr de vouloir supprimer votre photo ?"
-        else -> "Are you sure you want to revert to the default avatar?"
-    }
-
-    val removeBtn = when (appLanguage) {
-        "ar" -> "حذف"
-        "fr" -> "Supprimer"
-        else -> "Remove"
-    }
-
-    val cancelBtn = when (appLanguage) {
-        "ar" -> "إلغاء"
-        "fr" -> "Annuler"
-        else -> "Cancel"
-    }
-
-    val toastSuccessPhoto = when (appLanguage) {
-        "ar" -> "تم تحديث الصورة الشخصية بنجاح!"
-        "fr" -> "Photo de profil mise à jour avec succès !"
-        else -> "Profile picture updated successfully!"
-    }
-
-    val toastFailPhoto = when (appLanguage) {
-        "ar" -> "فشل تحديث الصورة الشخصية."
-        "fr" -> "Échec de la mise à jour de la photo."
-        else -> "Failed to update profile picture."
-    }
-
-    val toastPhotoRemoved = when (appLanguage) {
-        "ar" -> "تم إزالة الصورة الشخصية"
-        "fr" -> "Photo de profil supprimée"
-        else -> "Profile photo removed"
-    }
-
-    val toastDeleteAccount = when (appLanguage) {
-        "ar" -> "تم حذف الحساب ومسح كافة البيانات المحلية بنجاح."
-        "fr" -> "Compte supprimé et toutes les données locales effacées avec succès."
-        "es" -> "Cuenta eliminada y todos los datos locales borrados con éxito."
-        "de" -> "Konto gelöscht und alle lokalen Daten erfolgreich entfernt."
-        "it" -> "Account eliminato e tutti i dati locali cancellati con successo."
-        else -> "Account deleted and all local data wiped successfully."
-    }
-
-    val toastPrivacy = when (appLanguage) {
-        "ar" -> "سياسة الخصوصية: يتم مزامنتها بأمان في قاعدة بيانات التطبيق المحلية."
-        "fr" -> "Politique de Confidentialité : Données synchronisées localement."
-        else -> "Privacy Policy: Synchronized securely to local device Room DB."
-    }
-
-    val toastTerms = when (appLanguage) {
-        "ar" -> "الشروط: بياناتك ملك لك بالكامل وبدون أي مشاركة خارجية."
-        "fr" -> "Conditions : Vos données vous appartiennent pleinement."
-        else -> "Terms: Your data belongs fully to you."
-    }
-
-    val toastDataSafety = when (appLanguage) {
-        "ar" -> "أمان البيانات: تخزين محلي آمن ومحمي."
-        "fr" -> "Sécurité : Stockage local sécurisé."
-        else -> "Data Safety: Secure local sandbox storage."
-    }
-
-    val imagePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let {
-            val localPath = saveImageToInternalStorage(context, it)
-            if (localPath != null) {
-                viewModel.updateUserPhoto(localPath)
-                Toast.makeText(context, toastSuccessPhoto, Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(context, toastFailPhoto, Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    val languages = listOf(
-        "en" to "English",
-        "ar" to "العربية",
-        "fr" to "Français",
-        "es" to "Español",
-        "de" to "Deutsch",
-        "it" to "Italiano"
-    )
-    val currencies = listOf("MAD", "USD", "EUR", "GBP")
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-            .verticalScroll(rememberScrollState())
-    ) {
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Screen Header
-        Text(
-            text = profileTitle.uppercase(),
-            color = MoroccanGold,
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Black,
-            letterSpacing = 2.sp,
-            fontFamily = androidx.compose.ui.text.font.FontFamily.Serif
-        )
-        Text(
-            text = profileDesc,
-            color = SilkWhite.copy(alpha = 0.7f),
-            fontSize = 12.sp,
-            modifier = Modifier.padding(bottom = 24.dp)
-        )
-
-        // Traveler Card Info
-        GlassmorphicCard(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                // Profile Avatar Photo Frame Container with overlapping edit badge
-                Box(
-                    modifier = Modifier.size(80.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(72.dp)
-                            .clip(CircleShape)
-                            .background(MoroccanGold)
-                            .padding(2.dp)
-                            .clip(CircleShape)
-                            .background(SlateBlack)
-                            .combinedClickable(
-                                onClick = {
-                                    if (!userPhoto.isNullOrEmpty()) {
-                                        showPhotoOptions = true
-                                    } else {
-                                        imagePickerLauncher.launch("image/*")
-                                    }
-                                },
-                                onLongClick = {
-                                    if (!userPhoto.isNullOrEmpty()) {
-                                        showDeleteConfirmation = true
-                                    }
-                                }
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        if (!userPhoto.isNullOrEmpty()) {
-                            Image(
-                                painter = rememberAsyncImagePainter(userPhoto),
-                                contentDescription = "Profile Picture",
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
-                        } else {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = "Default Profile Avatar",
-                                tint = MoroccanGold,
-                                modifier = Modifier.size(42.dp)
-                            )
-                        }
-                    }
-
-                    // Floating circular edit/camera icon
-                    Box(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .align(Alignment.BottomEnd)
-                            .clip(CircleShape)
-                            .background(MoroccanGold)
-                            .clickable {
-                                if (!userPhoto.isNullOrEmpty()) {
-                                    showPhotoOptions = true
-                                } else {
-                                    imagePickerLauncher.launch("image/*")
-                                }
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit Profile Photo",
-                            tint = SlateBlack,
-                            modifier = Modifier.size(14.dp)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Column {
-                    Text(
-                        text = if (appLanguage == "ar") "مرحبا بك $resolvedProfileName" else "Welcome, $resolvedProfileName",
-                        color = MoroccanGold,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(text = resolvedProfileName, color = PureWhite, fontSize = 19.sp, fontWeight = FontWeight.ExtraBold)
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .padding(top = 4.dp, bottom = 4.dp)
-                            .clickable {
-                                tempNameInput = if (!isDefaultOrGuest) resolvedProfileName else ""
-                                showEditNameDialog = true
-                            }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = null,
-                            tint = MoroccanGold.copy(alpha = 0.9f),
-                            modifier = Modifier.size(13.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = if (appLanguage == "ar") "تعديل الاسم" else "Edit Name",
-                            color = MoroccanGold,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-
-                    if (!authProvider.isNullOrBlank()) {
-                        Text(text = "Via: $authProvider", color = LightGold, fontSize = 11.sp, fontWeight = FontWeight.Medium)
-                    }
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .background(RoyalGreen.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                    ) {
-                        Text(text = premiumMemberText, color = MoroccanGold, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                    }
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Requirement 6: "جوازي وشهداتي" Passport & Traveller Certificate Feature Card
-        val explorerVisited by viewModel.explorerVisited.collectAsState()
-        val allUserTrips by viewModel.allUserTrips.collectAsState()
-        val visitedCount = explorerVisited.size
-        val citiesCount = remember(allUserTrips, explorerVisited) {
-            com.example.ui.utils.VisitedStats.citiesCount(allUserTrips, explorerVisited)
-        }
-        val currentRank = remember(visitedCount, citiesCount) {
-            com.example.data.model.TravellerRank.resolveRank(visitedCount, citiesCount)
-        }
-
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    width = 1.5.dp,
-                    color = currentRank.frameColor,
-                    shape = RoundedCornerShape(18.dp)
-                )
-                .clickable { viewModel.setCertificateScreenVisible(true) },
-            shape = RoundedCornerShape(18.dp),
-            colors = CardDefaults.cardColors(containerColor = SlateBlack.copy(alpha = 0.95f))
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(14.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(52.dp)
-                        .clip(RoundedCornerShape(14.dp))
-                        .background(currentRank.frameColor.copy(alpha = 0.2f))
-                        .border(1.dp, currentRank.frameColor, RoundedCornerShape(14.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = currentRank.badgeEmoji, fontSize = 24.sp)
-                }
-
-                Spacer(modifier = Modifier.width(14.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = if (appLanguage == "ar") "جوازي وشهادة المسافر 📜" else "My Passport & Certificate 📜",
-                            color = MoroccanGold,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = if (appLanguage == "ar")
-                            "الرتبة: ${currentRank.titleAr} • $visitedCount مكان مزار"
-                        else
-                            "Rank: ${currentRank.titleEn} • $visitedCount Visited",
-                        color = SilkWhite.copy(alpha = 0.85f),
-                        fontSize = 12.sp
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(6.dp))
-
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = null,
-                    tint = MoroccanGold,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Settings Header
-        Text(
-            text = settingsLabel,
-            color = MoroccanGold,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 12.dp)
-        )
-
-        // User Name Row in Settings
-        SettingItemRow(
-            icon = Icons.Default.Badge,
-            title = if (appLanguage == "ar") "اسم المستخدم" else "User Name",
-            subtitle = resolvedProfileName,
-            onClick = {
-                tempNameInput = if (!isDefaultOrGuest) resolvedProfileName else ""
-                showEditNameDialog = true
-            }
-        )
-
-        // Language Row
-        SettingItemRow(
-            icon = Icons.Default.Language,
-            title = preferredLanguageTitle,
-            subtitle = languages.find { it.first == appLanguage }?.second ?: "English",
-            onClick = { showLanguagesDialog = true }
-        )
-
-        // Currency Row
-        SettingItemRow(
-            icon = Icons.Default.AttachMoney,
-            title = currencyTitle,
-            subtitle = appCurrency,
-            onClick = { showCurrencyDialog = true }
-        )
-
-        val tripEnabled by viewModel.tripRecordingEnabled.collectAsState()
-
-        // Trip Paths Recording Settings Row (Requirement 7)
-        SettingItemRow(
-            icon = Icons.Default.Route,
-            title = if (appLanguage == "ar") "حفظ مسارات الرحلات والشهادة" else "Record Trip Paths for Certificate",
-            subtitle = if (tripEnabled) (if (appLanguage == "ar") "مُفعّل على هذا الهاتف فقط" else "Enabled locally on device")
-                       else (if (appLanguage == "ar") "متوقف" else "Disabled"),
-            onClick = {
-                viewModel.setTripRecordingEnabled(!tripEnabled)
-                val msg = if (!tripEnabled) {
-                    if (appLanguage == "ar") "تم تفعيل حفظ المسارات لصنع الشهادة 📜" else "Trip recording enabled 📜"
-                } else {
-                    if (appLanguage == "ar") "تم إيقاف حفظ المسارات" else "Trip recording disabled"
-                }
-                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-            }
-        )
-
-        // Clear All Saved Trip Paths Row (Requirement 7)
-        SettingItemRow(
-            icon = Icons.Default.DeleteSweep,
-            title = if (appLanguage == "ar") "مسح مسارات الرحلات والبيانات" else "Clear Trip Paths & Certificate Data",
-            subtitle = if (appLanguage == "ar") "حذف كل المسارات المحفوظة على هذا الهاتف" else "Erase all saved trip paths on device",
-            onClick = {
-                viewModel.clearAllTripData()
-                Toast.makeText(context, if (appLanguage == "ar") "تم مسح جميع مسارات الرحلات المحفوظة 🗑️" else "Cleared all saved trip paths 🗑️", Toast.LENGTH_SHORT).show()
-            }
-        )
-
-        // Contact Developer Row
-        val contactDevTitle = when (appLanguage) {
-            "ar" -> "التواصل مع المطور"
-            "fr" -> "Contacter le Développeur"
-            else -> "Contact Developer"
-        }
-        val contactDevSub = "morocobahia@gmail.com"
-
-        SettingItemRow(
-            icon = Icons.Default.Email,
-            title = contactDevTitle,
-            subtitle = contactDevSub,
-            onClick = {
-                val intent = android.content.Intent(android.content.Intent.ACTION_SENDTO).apply {
-                    data = Uri.parse("mailto:morocobahia@gmail.com")
-                    putExtra(android.content.Intent.EXTRA_SUBJECT, "Bahja Morocco Travel - مراسلة المطور")
-                }
-                try {
-                    context.startActivity(intent)
-                } catch (e: Exception) {
-                    val clipboard = context.getSystemService(android.content.Context.CLIPBOARD_SERVICE) as? android.content.ClipboardManager
-                    if (clipboard != null) {
-                        val clip = android.content.ClipData.newPlainText("Developer Email", "morocobahia@gmail.com")
-                        clipboard.setPrimaryClip(clip)
-                    }
-                    Toast.makeText(
-                        context,
-                        if (appLanguage == "ar") "تم نسخ البريد الإلكتروني: morocobahia@gmail.com" else "Email copied: morocobahia@gmail.com",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-        MoroccanOrnamentalDivider()
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Legal and Info Section
-        val emergencyLinkTitle = when (appLanguage) {
-            "ar" -> "أرقام الطوارئ بالمغرب (الشرطة، الإسعاف...)"
-            "fr" -> "Numéros d'Urgence au Maroc"
-            else -> "Morocco Emergency Numbers"
-        }
-
-        InfoItemLinkRow(title = emergencyLinkTitle, icon = Icons.Default.PhoneInTalk) {
-            viewModel.setEmergencyScreenVisible(true)
-        }
-
-        Text(
-            text = infoSectionTitle,
-            color = MoroccanGold,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-        )
-
-        // Highlighted Dedicated Privacy Policy Card in Settings
-        Card(
-            shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(containerColor = RoyalGreen.copy(alpha = 0.25f)),
-            border = BorderStroke(1.dp, MoroccanGold.copy(alpha = 0.5f)),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp)
-                .clickable { showPrivacyPolicyDialog = true }
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(14.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                    Box(
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
-                            .background(MoroccanGold.copy(alpha = 0.2f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Security,
-                            contentDescription = null,
-                            tint = MoroccanGold,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Column {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = privacyPolicyTitle,
-                                color = PureWhite,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(4.dp))
-                                    .background(MoroccanGold)
-                                    .padding(horizontal = 5.dp, vertical = 2.dp)
-                            ) {
-                                Text(
-                                    text = if (appLanguage == "ar") "محمي وموثق" else if (appLanguage == "fr") "Sécurisé" else "Verified",
-                                    color = SlateBlack,
-                                    fontSize = 9.sp,
-                                    fontWeight = FontWeight.Black
-                                )
-                            }
-                        }
-                        Text(
-                            text = if (appLanguage == "ar") "انقر لعرض تفاصيل حماية وأمان بياناتك" else if (appLanguage == "fr") "Consultez la protection de vos données" else "Tap to view data protection terms",
-                            color = SoftGray,
-                            fontSize = 11.sp
-                        )
-                    }
-                }
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = null,
-                    tint = MoroccanGold
-                )
-            }
-        }
-
-        // Privacy & Ads Choices (EEA/UK/Switzerland region only)
-        if (isUserInEeaRegion) {
-            val consentStatusText = when (consentStatus) {
-                com.example.consent.ConsentStatus.GRANTED -> if (appLanguage == "ar") "موافقة مفعلة" else if (appLanguage == "fr") "Accepté" else "Consent Granted"
-                com.example.consent.ConsentStatus.DENIED -> if (appLanguage == "ar") "إعلانات معطلة" else if (appLanguage == "fr") "Refusé" else "Ads Disabled"
-                com.example.consent.ConsentStatus.UNKNOWN -> if (appLanguage == "ar") "قيد الاختيار" else if (appLanguage == "fr") "En attente" else "Pending Choice"
-            }
-            val consentTitle = when (appLanguage) {
-                "ar" -> "خيارات الخصوصية والإعلانات (EEA/UK)"
-                "fr" -> "Confidentialité et choix publicitaires (EEE/UK)"
-                "es" -> "Privacidad y opciones de anuncios (EEE/UK)"
-                "de" -> "Datenschutz & Werbeeinstellungen (EWR/UK)"
-                "it" -> "Privacy e scelte pubblicitarie (SEE/UK)"
-                else -> "Privacy & Ads Choices (EEA/UK)"
-            }
-            val consentSubtitle = when (appLanguage) {
-                "ar" -> "تعديل موافقة إعلانات Meta Audience Network في أي وقت"
-                "fr" -> "Modifier votre choix d'annonces Meta Audience Network à tout moment"
-                "es" -> "Modifica tus opciones de anuncios de Meta en cualquier momento"
-                "de" -> "Ändern Sie Ihre Meta-Werbeeinwilligung jederzeit"
-                "it" -> "Modifica la tua scelta sugli annunci Meta in qualsiasi momento"
-                else -> "Change your Meta Audience Network ad choice anytime"
-            }
-
-            Card(
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = SlateBlack),
-                border = BorderStroke(1.dp, MoroccanGold.copy(alpha = 0.4f)),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .clickable { showConsentDialogInProfile = true }
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(14.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                        Box(
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(RoyalGreen.copy(alpha = 0.25f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.PrivacyTip,
-                                contentDescription = null,
-                                tint = MoroccanGold,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = consentTitle,
-                                    color = PureWhite,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Box(
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(4.dp))
-                                        .background(if (consentStatus == com.example.consent.ConsentStatus.GRANTED) RoyalGreen else Color(0xFF616161))
-                                        .padding(horizontal = 6.dp, vertical = 2.dp)
-                                ) {
-                                    Text(
-                                        text = consentStatusText,
-                                        color = PureWhite,
-                                        fontSize = 9.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
-                            }
-                            Text(
-                                text = consentSubtitle,
-                                color = SoftGray,
-                                fontSize = 11.sp
-                            )
-                        }
-                    }
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = null,
-                        tint = MoroccanGold
-                    )
-                }
-            }
-        }
-
-        // Rewarded Video: Watch video ad to earn 30 minutes without full-screen (interstitial) ads
-        val isAdFreeActive = adFreeRemainingSeconds > 0L
-        val remainingMins = adFreeRemainingSeconds / 60L
-        val remainingSecs = adFreeRemainingSeconds % 60L
-        val formattedCountdown = String.format(Locale.US, "%02d:%02d", remainingMins, remainingSecs)
-
-        Card(
-            shape = RoundedCornerShape(14.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = if (isAdFreeActive) RoyalGreen.copy(alpha = 0.25f) else MoroccanGold.copy(alpha = 0.14f)
-            ),
-            border = BorderStroke(1.2.dp, if (isAdFreeActive) EmeraldGreen else MoroccanGold.copy(alpha = 0.75f)),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 6.dp)
-                .clickable {
-                    val act = context as? Activity
-                    val rewarded = com.example.ads.FacebookAdsManager.showRewardedVideo(
-                        activity = act,
-                        onRewardGranted = {
-                            com.example.ads.FacebookAdsManager.grantAdFreeInterstitialReward(context, 30)
-                            Toast.makeText(
-                                context,
-                                when (appLanguage) {
-                                    "ar" -> "🎉 مبروك! حصلت على مكافأة نصف ساعة (30 دقيقة) بدون ظهور الإعلان الكلي لكي لا يزعجك!"
-                                    "fr" -> "🎉 Bravo ! Vous avez 30 minutes sans publicités plein écran !"
-                                    else -> "🎉 Congrats! You unlocked 30 minutes without full-screen ads!"
-                                },
-                                Toast.LENGTH_LONG
-                            ).show()
-                        },
-                        onDismissed = { wasRewarded ->
-                            if (wasRewarded) {
-                                com.example.ads.FacebookAdsManager.grantAdFreeInterstitialReward(context, 30)
-                            }
-                        }
-                    )
-                    if (!rewarded) {
-                        // No real rewarded video is ready yet: never fake an ad or grant a free reward
-                        Toast.makeText(
-                            context,
-                            when (appLanguage) {
-                                "ar" -> "الإعلان غير جاهز حاليا، حاول مرة أخرى بعد لحظات."
-                                "fr" -> "La vidéo n'est pas encore prête, réessayez dans un instant."
-                                else -> "The video isn't ready yet, please try again in a moment."
-                            },
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(14.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                                .background(if (isAdFreeActive) EmeraldGreen else MoroccanGold),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = if (isAdFreeActive) Icons.Default.Verified else Icons.Default.PlayCircle,
-                                contentDescription = null,
-                                tint = DeepBlack,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = when (appLanguage) {
-                                        "ar" -> "إعلان الفيديو: مكافأة نصف ساعة بدون الإعلان الكلي"
-                                        "fr" -> "Vidéo : 30 min sans publicité plein écran"
-                                        else -> "Video Ad: 30 Mins Without Full-Screen Ads"
-                                    },
-                                    color = PureWhite,
-                                    fontSize = 13.5.sp,
-                                    fontWeight = FontWeight.ExtraBold
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = when (appLanguage) {
-                                    "ar" -> "شاهد إعلان الفيديو واحصل على مكافأة نصف ساعة (30 دقيقة) بدون ظهور الإعلان الكلي (ملء الشاشة) فلا يظهر لك ولا يزعجك أثناء استخدام التطبيق!"
-                                    "fr" -> "Regardez cette vidéo pour obtenir une récompense de 30 minutes sans aucune publicité plein écran (interstitielle) qui vous dérange !"
-                                    else -> "Watch this video ad to get a 30-minute reward where no full-screen (interstitial) ad will appear or bother you!"
-                                },
-                                color = SilkWhite.copy(alpha = 0.9f),
-                                fontSize = 11.5.sp,
-                                lineHeight = 16.sp
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(if (isAdFreeActive) EmeraldGreen else MoroccanGold)
-                            .padding(horizontal = 8.dp, vertical = 5.dp)
-                    ) {
-                        Text(
-                            text = if (isAdFreeActive) {
-                                "⏱️ $formattedCountdown"
-                            } else {
-                                if (appLanguage == "ar") "🎁 30 دقيقة" else "🎁 30m Free"
-                            },
-                            color = DeepBlack,
-                            fontSize = 10.5.sp,
-                            fontWeight = FontWeight.Black
-                        )
-                    }
-                }
-
-                if (isAdFreeActive) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Surface(
-                        color = DeepBlack.copy(alpha = 0.6f),
-                        shape = RoundedCornerShape(8.dp),
-                        border = BorderStroke(0.5.dp, EmeraldGreen.copy(alpha = 0.6f)),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = when (appLanguage) {
-                                "ar" -> "✅ مكافأتك مفعلة الآن! لن يظهر لك أي إعلان كلي يزعجك لمدة $formattedCountdown دقيقة (اضغط لتمديد الوقت)"
-                                "fr" -> "✅ Récompense active ! Aucune annonce plein écran pendant $formattedCountdown"
-                                else -> "✅ Reward Active! No full-screen ads for the next $formattedCountdown"
-                            },
-                            color = EmeraldGreen,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
-                        )
-                    }
-                }
-            }
-        }
-
-        InfoItemLinkRow(title = termsTitle, icon = Icons.Default.Description) {
-            showTermsDialog = true
-        }
-        InfoItemLinkRow(title = dataSafetyTitle, icon = Icons.Default.VerifiedUser) {
-            showDataSafetyDialog = true
-        }
-        InfoItemLinkRow(title = "إصدار التطبيق v${BuildConfig.VERSION_NAME}", icon = Icons.Default.Info) {
-            Toast.makeText(context, "الإصدار الحالي: ${BuildConfig.VERSION_NAME} (كود ${BuildConfig.VERSION_CODE})", Toast.LENGTH_SHORT).show()
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = deleteAccountText,
-                color = Color.Red.copy(alpha = 0.6f),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Medium,
-                style = androidx.compose.ui.text.TextStyle(
-                    textDecoration = androidx.compose.ui.text.style.TextDecoration.Underline
-                ),
-                modifier = Modifier
-                    .clickable { showDeleteAccountConfirm = true }
-                    .padding(8.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(100.dp))
-    }
-
-    // Edit Name Dialog
-    if (showEditNameDialog) {
-        val isRtl = appLanguage == "ar"
-        AlertDialog(
-            onDismissRequest = { showEditNameDialog = false },
-            containerColor = SlateBlack,
-            title = {
-                Text(
-                    text = if (isRtl) "تعديل اسم المستخدم" else "Edit User Name",
-                    color = MoroccanGold,
-                    fontWeight = FontWeight.Bold
-                )
-            },
-            text = {
-                Column {
-                    Text(
-                        text = if (isRtl)
-                            "أدخل اسمك الكريم ليظهر في الترحيب والملف الشخصي:"
-                        else
-                            "Enter your name to update your greeting and profile:",
-                        color = SilkWhite,
-                        fontSize = 13.sp
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    OutlinedTextField(
-                        value = tempNameInput,
-                        onValueChange = { tempNameInput = it },
-                        label = { Text(if (isRtl) "الاسم" else "Name") },
-                        placeholder = { Text(if (isRtl) "مثال: ياسين" else "e.g. Yassine") },
-                        singleLine = true,
-                        leadingIcon = {
-                            Icon(Icons.Default.Person, contentDescription = null, tint = MoroccanGold)
-                        },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = PureWhite,
-                            unfocusedTextColor = SilkWhite,
-                            focusedBorderColor = MoroccanGold,
-                            unfocusedBorderColor = SoftGray
-                        ),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        val clean = tempNameInput.trim()
-                        if (clean.isNotBlank()) {
-                            viewModel.loginWithUsername(clean)
-                            Toast.makeText(
-                                context,
-                                if (isRtl) "مرحبا بك $clean" else "Welcome $clean",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            showEditNameDialog = false
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = MoroccanGold, contentColor = SlateBlack)
-                ) {
-                    Text(if (isRtl) "حفظ" else "Save", fontWeight = FontWeight.Bold)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showEditNameDialog = false }) {
-                    Text(if (isRtl) "إلغاء" else "Cancel", color = SoftGray)
-                }
-            }
-        )
-    }
-
-    // Delete Account Confirmation Dialog
-    if (showDeleteAccountConfirm) {
-        val deleteConfirmTitle = when (appLanguage) {
-            "ar" -> "هل تريد حذف حسابك وبياناتك نهائياً؟"
-            "fr" -> "Supprimer définitivement le compte et les données ?"
-            "es" -> "¿Eliminar definitivamente la cuenta y los datos?"
-            "de" -> "Konto und Daten endgültig löschen?"
-            "it" -> "Eliminare definitivamente account e dati?"
-            else -> "Permanently Delete Account & Data?"
-        }
-        val deleteConfirmDesc = when (appLanguage) {
-            "ar" -> "تحذير: هذا الإجراء دائم ولا يمكن التراجع عنه. سيتم مسح كافة بياناتك المحفوظة (المفضلة، خطط وجداول الرحلات، الصورة الشخصية، التفضيلات، والذاكرة المؤقتة) بالكامل من جهازك."
-            "fr" -> "Attention : Cette action est irréversible. Toutes vos données enregistrées (favoris, itinéraires, photo de profil, préférences et cache) seront définitivement effacées de votre appareil."
-            "es" -> "Advertencia: Esta acción es permanente e irreversible. Todos sus datos guardados (favoritos, itinerarios de viaje, foto de perfil, preferencias y caché) se eliminarán por completo de su dispositivo."
-            "de" -> "Warnung: Diese Aktion ist endgültig und kann nicht rückgängig gemacht werden. Alle Ihre gespeicherten Daten (Favoriten, Reisepläne, Profilfoto, Einstellungen und Cache) werden vollständig von Ihrem Gerät gelöscht."
-            "it" -> "Attenzione: Questa azione è permanente e irreversibile. Tutti i tuoi dati salvati (preferiti, itinerari di viaggio, foto profilo, preferenze e cache) verranno cancellati completamente dal tuo dispositivo."
-            else -> "Warning: This action is permanent and cannot be undone. All your saved data (favorites, trip plans, profile photo, preferences, and cache) will be completely wiped from your device."
-        }
-        val deleteConfirmBtn = when (appLanguage) {
-            "ar" -> "حذف نهائي لكل البيانات"
-            "fr" -> "Supprimer toutes les données"
-            "es" -> "Eliminar todos los datos"
-            "de" -> "Alle Daten endgültig löschen"
-            "it" -> "Elimina definitivamente tutti i dati"
-            else -> "Permanently Delete All Data"
-        }
-        val deleteCancelBtn = when (appLanguage) {
-            "ar" -> "إلغاء"
-            "fr" -> "Annuler"
-            "es" -> "Cancelar"
-            "de" -> "Abbrechen"
-            "it" -> "Annulla"
-            else -> "Cancel"
-        }
-        AlertDialog(
-            onDismissRequest = { showDeleteAccountConfirm = false },
-            title = { Text(text = deleteConfirmTitle, color = Color.Red, fontWeight = FontWeight.Bold) },
-            text = { Text(text = deleteConfirmDesc, color = SilkWhite) },
-            containerColor = SlateBlack,
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showDeleteAccountConfirm = false
-                        Toast.makeText(context, toastDeleteAccount, Toast.LENGTH_LONG).show()
-                        viewModel.deleteAccount()
-                    }
-                ) {
-                    Text(text = deleteConfirmBtn, color = Color.Red, fontWeight = FontWeight.Bold)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDeleteAccountConfirm = false }) {
-                    Text(text = deleteCancelBtn, color = SoftGray)
-                }
-            }
-        )
-    }
-
-    // Language selector pop-up dialog
-    if (showLanguagesDialog) {
-        AlertDialog(
-            onDismissRequest = { showLanguagesDialog = false },
-            title = { Text(chooseLangTitle, color = MoroccanGold) },
-            containerColor = SlateBlack,
-            text = {
-                Column {
-                    languages.forEach { (code, name) ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    viewModel.setAppLanguage(code)
-                                    showLanguagesDialog = false
-                                }
-                                .padding(vertical = 12.dp, horizontal = 4.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(text = name, color = SilkWhite, fontSize = 15.sp, fontWeight = if (appLanguage == code) FontWeight.Bold else FontWeight.Normal)
-                            if (appLanguage == code) {
-                                Icon(Icons.Default.Check, contentDescription = null, tint = MoroccanGold)
-                            }
-                        }
-                    }
-                }
-            },
-            confirmButton = {}
-        )
-    }
-
-    // Currency selector pop-up dialog
-    if (showCurrencyDialog) {
-        AlertDialog(
-            onDismissRequest = { showCurrencyDialog = false },
-            title = { Text(chooseCurrencyTitle, color = MoroccanGold) },
-            containerColor = SlateBlack,
-            text = {
-                Column {
-                    currencies.forEach { currency ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    viewModel.setAppCurrency(currency)
-                                    showCurrencyDialog = false
-                                }
-                                .padding(vertical = 12.dp, horizontal = 4.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(text = currency, color = SilkWhite, fontSize = 15.sp, fontWeight = if (appCurrency == currency) FontWeight.Bold else FontWeight.Normal)
-                            if (appCurrency == currency) {
-                                Icon(Icons.Default.Check, contentDescription = null, tint = MoroccanGold)
-                            }
-                        }
-                    }
-                }
-            },
-            confirmButton = {}
-        )
-    }
-
-    // Photo options dialog
-    if (showPhotoOptions) {
-        AlertDialog(
-            onDismissRequest = { showPhotoOptions = false },
-            title = { Text(profilePhotoTitle, color = MoroccanGold, fontWeight = FontWeight.Bold) },
-            containerColor = SlateBlack,
-            text = {
-                Column {
-                    Text(profilePhotoDesc, color = SilkWhite, fontSize = 14.sp)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(
-                        onClick = {
-                            imagePickerLauncher.launch("image/*")
-                            showPhotoOptions = false
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = RoyalGreen),
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(uploadPhotoText, color = PureWhite, fontWeight = FontWeight.Bold)
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Button(
-                        onClick = {
-                            showPhotoOptions = false
-                            showDeleteConfirmation = true
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6E0D0D)),
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(removePhotoText, color = PureWhite, fontWeight = FontWeight.Bold)
-                    }
-                }
-            },
-            confirmButton = {}
-        )
-    }
-
-    // Delete photo confirmation dialog
-    if (showDeleteConfirmation) {
-        AlertDialog(
-            onDismissRequest = { showDeleteConfirmation = false },
-            title = { Text(removeConfirmTitle, color = MoroccanGold, fontWeight = FontWeight.Bold) },
-            containerColor = SlateBlack,
-            text = {
-                Text(removeConfirmDesc, color = SilkWhite, fontSize = 14.sp)
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        viewModel.updateUserPhoto("")
-                        try {
-                            context.filesDir.listFiles()?.forEach { file ->
-                                if (file.name.startsWith("profile_avatar")) {
-                                    file.delete()
-                                }
-                            }
-                        } catch (e: Exception) {
-                            android.util.Log.e("ProfileScreen", "Error deleting profile files", e)
-                        }
-                        showDeleteConfirmation = false
-                        Toast.makeText(context, toastPhotoRemoved, Toast.LENGTH_SHORT).show()
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6E0D0D))
-                ) {
-                    Text(removeBtn, color = PureWhite, fontWeight = FontWeight.Bold)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDeleteConfirmation = false }) {
-                    Text(cancelBtn, color = SoftGray)
-                }
-            }
-        )
-    }
-
-    // Privacy Policy Dialog
-    if (showPrivacyPolicyDialog) {
-        PrivacyPolicyDialog(
-            appLanguage = appLanguage,
-            onDismiss = { showPrivacyPolicyDialog = false }
-        )
-    }
-
-    // Terms of Service Dialog
-    if (showTermsDialog) {
-        TermsOfServiceDialog(
-            appLanguage = appLanguage,
-            onDismiss = { showTermsDialog = false }
-        )
-    }
-
-    // Data Safety Dialog
-    if (showDataSafetyDialog) {
-        DataSafetyDialog(
-            appLanguage = appLanguage,
-            onDismiss = { showDataSafetyDialog = false }
-        )
-    }
-
-    // Meta Consent Dialog (Reopenable from Privacy & Ads Choices in Settings)
-    if (showConsentDialogInProfile) {
-        com.example.consent.MetaConsentDialog(
-            appLanguage = appLanguage,
-            onAccept = {
-                com.example.consent.ConsentManager.grantConsent()
-                showConsentDialogInProfile = false
-            },
-            onDecline = {
-                com.example.consent.ConsentManager.denyConsent()
-                showConsentDialogInProfile = false
-            },
-            onOpenPrivacyPolicy = {
-                showPrivacyPolicyDialog = true
-            }
-        )
-    }
-
-
-}
-
-
-@Composable
-fun PrivacyPolicyDialog(
-    appLanguage: String,
-    onDismiss: () -> Unit
-) {
-    val context = LocalContext.current
-    val privacyPolicyUrl = "https://yassinesouhail712-spec.github.io"
-    val title = when (appLanguage) {
-        "ar" -> "سياسة الخصوصية وأمان البيانات"
-        "fr" -> "Politique de Confidentialité & RGPD"
-        "es" -> "Política de Privacidad y Seguridad"
-        "de" -> "Datenschutz & Datensicherheit"
-        "it" -> "Informativa sulla Privacy e Sicurezza"
-        else -> "Privacy Policy (GDPR Compliant)"
-    }
-
-    val lastUpdated = when (appLanguage) {
-        "ar" -> "تاريخ السريان: 3 أكتوبر 2026"
-        "fr" -> "Date d'entrée en vigueur : 26 septembre 2026"
-        "es" -> "Fecha de entrada en vigor: 26 de septiembre de 2026"
-        "de" -> "Gültig ab: 26. September 2026"
-        "it" -> "Data di entrata in vigore: 26 settembre 2026"
-        else -> "Effective Date: October 3, 2026"
-    }
-
-    val closeText = when (appLanguage) {
-        "ar" -> "فهمت وموافق"
-        "fr" -> "J'ai compris & J'accepte"
-        "es" -> "Entendido y Acepto"
-        "de" -> "Verstanden & Zustimmen"
-        "it" -> "Ho capito e Accetto"
-        else -> "I Understand & Accept"
-    }
-
-    val openWebText = when (appLanguage) {
-        "ar" -> "فتح صفحة سياسة الخصوصية الرسمية 🌐"
-        "fr" -> "Ouvrir la Politique sur le Web 🌐"
-        "es" -> "Abrir Política en la Web 🌐"
-        "de" -> "Datenschutzerklärung im Browser öffnen 🌐"
-        "it" -> "Apri Informativa sul Web 🌐"
-        else -> "Open Official Web Privacy Policy 🌐"
-    }
-
-    val copyText = when (appLanguage) {
-        "ar" -> "نسخ البريد للدعم"
-        "fr" -> "Copier l'email support"
-        "es" -> "Copiar correo de soporte"
-        "de" -> "Support-E-Mail kopieren"
-        "it" -> "Copia email di supporto"
-        else -> "Copy Support Email"
-    }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(32.dp)
-                        .clip(CircleShape)
-                        .background(MoroccanGold.copy(alpha = 0.2f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Security,
-                        contentDescription = null,
-                        tint = MoroccanGold,
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Column {
-                    Text(
-                        text = title,
-                        color = MoroccanGold,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = lastUpdated,
-                        color = SoftGray,
-                        fontSize = 11.sp
-                    )
-                }
-            }
-        },
-        containerColor = SlateBlack,
-        text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 420.dp)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                OutlinedButton(
-                    onClick = {
-                        try {
-                            val intent = android.content.Intent(
-                                android.content.Intent.ACTION_VIEW,
-                                Uri.parse(privacyPolicyUrl)
-                            )
-                            context.startActivity(intent)
-                        } catch (_: Exception) {
-                            Toast.makeText(context, privacyPolicyUrl, Toast.LENGTH_LONG).show()
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp),
-                    shape = RoundedCornerShape(10.dp),
-                    border = BorderStroke(1.dp, MoroccanGold.copy(alpha = 0.6f)),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MoroccanGold)
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.OpenInNew,
-                        contentDescription = null,
-                        tint = MoroccanGold,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = openWebText, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                }
-
-                when (appLanguage) {
-                    "ar" -> {
-                        PrivacySectionItem(
-                            icon = Icons.Default.Lock,
-                            title = "1. بياناتك تبقى على جهازك",
-                            body = "المفضلة والخطط المحفوظة والتقدّم ونقاط المستكشف وبيانات الملف الشخصي (إن سجّلت الدخول) تُحفظ محلياً على هاتفك فقط. لا نملك خادماً لحسابات المستخدمين ولا نبيع بياناتك."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.LocationOn,
-                            title = "2. الموقع الجغرافي",
-                            body = "نستخدم موقعك الدقيق أو التقريبي بإذنك وأثناء استخدام التطبيق فقط (ليس في الخلفية) لعرض الأماكن القريبة والخريطة والملاحة. لا نخزّنه على خوادمنا، لكن بعض الميزات ترسل إحداثيات إلى خدمات خارجية لتعمل: الطقس (Open-Meteo) والمسارات (OSRM) والخرائط والبحث (OpenStreetMap وOverpass) وصور الشوارع (Mapillary). تسجيل الرحلات اختياري ويبقى على جهازك."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Videocam,
-                            title = "3. الكاميرا (مراقبة السائق)",
-                            body = "تُستخدم الكاميرا الأمامية فقط عند تشغيلك الميزة وبإذنك، وتُحلَّل لحظياً داخل جهازك للكشف عن النعاس أو التشتت. لا يتم تسجيل أو حفظ أو إرسال أي صورة أو فيديو. ويُستخدم إذن العرض فوق التطبيقات لإظهار التنبيهات فقط."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Share,
-                            title = "4. الإعلانات (Meta Audience Network)",
-                            body = "نعرض إعلانات بانر وبينية وفيديو بمكافأة عبر Meta Audience Network (Facebook SDK). قد تجمع Meta وشركاؤها معرّف الإعلانات (GAID) وعنوان IP ومعلومات الجهاز وتفاعلك مع الإعلانات لعرض إعلانات مخصّصة أو غير مخصّصة وقياس الأداء ومنع الاحتيال. في أوروبا والمملكة المتحدة وسويسرا لا تُطلب الإعلانات إلا بعد موافقتك، ويمكنك تغييرها من الإعدادات ← الخصوصية وخيارات الإعلانات. يمكنك أيضاً إعادة ضبط معرّف الإعلانات من إعدادات أندرويد.\nhttps://www.facebook.com/privacy/policy/"
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Info,
-                            title = "5. الذكاء الاصطناعي والبريد",
-                            body = "عند إنشاء خطة أو استخدام المساعد تُرسل نصوص الطلب (المدينة، الميزانية، التفضيلات، سؤالك) إلى Google Gemini، فلا تكتب معلومات شخصية حساسة. وإن اشتركت بالبريد الإلكتروني للتنبيهات يُرسل بريدك إلى جدول Google Sheets يملكه المطوّر ويُحذف عند طلبك."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.DeleteForever,
-                            title = "6. حقوقك وحذف البيانات",
-                            body = "يمكنك حذف كل البيانات المحلية من الملف الشخصي، وسحب أي إذن أو موافقة في أي وقت، وطلب حذف بريدك من قائمتنا. لك حقوق الاطلاع والتصحيح والحذف والاعتراض بحسب GDPR وCCPA والقانون المغربي 09-08. التطبيق غير موجّه للأطفال دون 13 سنة."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Email,
-                            title = "7. التواصل معنا",
-                            body = "للاستفسار عن الخصوصية:\nmorocobahia@gmail.com\n$privacyPolicyUrl"
-                        )
-                    }
-                    "fr" -> {
-                        PrivacySectionItem(
-                            icon = Icons.Default.Lock,
-                            title = "1. Aucune Connexion Requise & Stockage Local",
-                            body = "Bahja Morocco Travel ne nécessite aucune création de compte ni connexion. Vos programmes quotidiens de divertissement, vos favoris et vos cartes hors ligne (Offline Maps) sont enregistrés uniquement sur votre téléphone."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.LocationOn,
-                            title = "2. Données Collectées (GPS & Identifiant Publicitaire)",
-                            body = "• Position GPS : utilisée avec votre accord pour afficher les sites touristiques proches au Maroc et les cartes hors ligne (traitée localement, non stockée sur des serveurs distants).\n• Identifiant de l'appareil (Advertising ID / GAID), adresse IP et système : utilisés pour diffuser des publicités et mesurer leur performance."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Videocam,
-                            title = "3. Utilisation de la Caméra (Surveillance de la Vigilance du Conducteur)",
-                            body = "L'application utilise la caméra frontale uniquement avec votre autorisation explicite lorsque vous activez la fonction de surveillance du conducteur, afin de détecter localement et en temps réel la fermeture des yeux ou l'inattention au volant. Aucune photo ni vidéo n'est jamais enregistrée, stockée ou transmise à un serveur externe."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Share,
-                            title = "4. Facebook SDK (Meta Audience Network)",
-                            body = "Nous affichons des bannières, interstitiels et vidéos avec récompense (30 min sans publicité plein écran) via Meta Audience Network (https://www.facebook.com/about/privacy/) avec chiffrement HTTPS."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.DeleteForever,
-                            title = "5. Vos Droits RGPD / CCPA & Protection des Enfants",
-                            body = "Vous pouvez donner, modifier ou retirer votre consentement à tout moment dans Paramètres -> Confidentialité et choix publicitaires, et effacer toutes vos données locales. Application non destinée aux enfants (<13 ans / <16 ans UE)."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Email,
-                            title = "6. Contact & Lien Officiel",
-                            body = "Date d'entrée en vigueur : 26 septembre 2026\nEmail : morocobahia@gmail.com\nWeb : $privacyPolicyUrl"
-                        )
-                    }
-                    "es" -> {
-                        PrivacySectionItem(
-                            icon = Icons.Default.Lock,
-                            title = "1. Sin Inicio de Sesión y Datos Locales",
-                            body = "No se requiere cuenta ni inicio de sesión. Sus planes diarios, favoritos y mapas sin conexión se guardan localmente en su dispositivo."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.LocationOn,
-                            title = "2. Ubicación GPS e ID de Dispositivo",
-                            body = "Usamos su GPS localmente para mostrar sitios turísticos cercanos en Marruecos y mapas. El ID de publicidad (GAID) e IP se usan para mostrar anuncios (banner, intersticial y video)."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Videocam,
-                            title = "3. Uso de la Cámara (Monitoreo del Conductor)",
-                            body = "La cámara frontal se utiliza únicamente con su permiso explícito al activar el monitoreo del conductor para detectar somnolencia o distracción en tiempo real en su dispositivo. Nunca se graban, guardan ni envían imágenes o videos a ningún servidor."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Share,
-                            title = "4. Meta Audience Network (Facebook SDK)",
-                            body = "Mostramos anuncios mediante Facebook SDK. En Europa (EEE/Reino Unido), puede aceptar, rechazar o cambiar su consentimiento en cualquier momento desde Ajustes."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.DeleteForever,
-                            title = "5. Derechos RGPD y Contacto",
-                            body = "Puede eliminar todos sus datos locales desde Ajustes o cambiar su consentimiento.\nFecha: 26 de septiembre de 2026\nContacto: morocobahia@gmail.com"
-                        )
-                    }
-                    "de" -> {
-                        PrivacySectionItem(
-                            icon = Icons.Default.Lock,
-                            title = "1. Keine Anmeldung Erforderlich & Lokale Daten",
-                            body = "Für Bahja Morocco Travel ist kein Konto erforderlich. Tagespläne, Favoriten und Offline-Karten werden lokal auf Ihrem Gerät gespeichert."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.LocationOn,
-                            title = "2. GPS-Standort & Geräte-ID",
-                            body = "Wir nutzen Ihren GPS-Standort lokal für nahegelegene Sehenswürdigkeiten in Marokko und Offline-Karten. Die Werbe-ID (GAID) wird für Banner-, Interstitial- und Videoanzeigen genutzt."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Videocam,
-                            title = "3. Kameranutzung (Fahrer-Aufmerksamkeitsüberwachung)",
-                            body = "Die Frontkamera wird nur mit Ihrer ausdrücklichen Zustimmung bei Aktivierung der Fahrerüberwachung verwendet, um Müdigkeit oder Ablenkung lokal in Echtzeit zu erkennen. Es werden niemals Fotos oder Videos gespeichert oder an Server übertragen."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Share,
-                            title = "4. Facebook SDK (Meta)",
-                            body = "Anzeigen werden über Meta Audience Network geschaltet. In Europa (EWR/UK) können Sie Ihre Einwilligung jederzeit in den Einstellungen ändern oder widerrufen."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.DeleteForever,
-                            title = "5. DSGVO-Rechte & Kontakt",
-                            body = "Sie können jederzeit alle lokalen Daten in den Einstellungen löschen.\nStand: 26. September 2026\nKontakt: morocobahia@gmail.com"
-                        )
-                    }
-                    "it" -> {
-                        PrivacySectionItem(
-                            icon = Icons.Default.Lock,
-                            title = "1. Nessun Accesso Richiesto & Dati Locali",
-                            body = "Non è richiesto alcun account. Piani giornalieri, preferiti e mappe offline sono salvati localmente sul dispositivo."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Videocam,
-                            title = "2. Uso della Fotocamera (Monitoraggio Conducente)",
-                            body = "La fotocamera anteriore viene utilizzata solo con il tuo consenso esplicito per rilevare localmente sonnolenza o distrazione alla guida. Nessuna immagine o video viene mai registrato, salvato o inviato a server esterni."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Share,
-                            title = "3. GPS, Meta Audience Network",
-                            body = "Usiamo il GPS localmente per i siti turistici vicini e l'ID pubblicitario per annunci banner, interstitial e video tramite Facebook SDK. Puoi modificare il consenso GDPR o eliminare i dati in qualsiasi momento nelle Impostazioni.\nContatto: morocobahia@gmail.com"
-                        )
-                    }
-                    else -> {
-                        PrivacySectionItem(
-                            icon = Icons.Default.Lock,
-                            title = "1. Your data stays on your device",
-                            body = "Favorites, saved plans, progress, Explorer XP and profile details (if you sign in) are stored locally on your phone only. We do not run a user-account server and we never sell your data."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.LocationOn,
-                            title = "2. Location",
-                            body = "With your permission, and only while you use the app (not in the background), we use your precise or approximate location for nearby places, the map and navigation. We do not store it on our servers, but some features send coordinates to third-party services to work: weather (Open-Meteo), routing (OSRM), maps and search (OpenStreetMap, Overpass) and street imagery (Mapillary). Trip recording is optional and stays on your device."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Videocam,
-                            title = "3. Camera (Driver Monitor)",
-                            body = "The front camera is used only when you turn the feature on and grant permission, and it is analyzed in real time on your device to detect drowsiness or distraction. No photo or video is ever recorded, saved or sent. The display-over-other-apps permission is used only to show alerts."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Share,
-                            title = "4. Ads (Meta Audience Network)",
-                            body = "We show banner, interstitial and rewarded-video ads via Meta Audience Network (Facebook SDK). Meta and its partners may collect your Advertising ID (GAID), IP address, device information and ad interactions to deliver personalized or non-personalized ads, measure performance and prevent fraud. In the EEA, UK and Switzerland ads are requested only after your consent, which you can change in Settings → Privacy & Ads Choices. You can also reset your advertising ID in Android settings.\nhttps://www.facebook.com/privacy/policy/"
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Info,
-                            title = "5. AI and email",
-                            body = "When you generate a plan or use the assistant, the request text (city, budget, preferences, your question) is sent to Google Gemini, so please avoid sensitive personal details. If you subscribe with your email for alerts, it is sent to a Google Sheet owned by the developer and removed on request."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.DeleteForever,
-                            title = "6. Your rights and data deletion",
-                            body = "You can erase all local data from Profile, revoke any permission or consent at any time, and ask us to remove your email from our list. Depending on your country you have rights of access, correction, deletion and objection (GDPR, CCPA, Moroccan Law 09-08). The app is not directed to children under 13."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Email,
-                            title = "7. Contact",
-                            body = "Privacy questions:\nmorocobahia@gmail.com\nWeb: $privacyPolicyUrl"
-                        )
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = onDismiss,
-                colors = ButtonDefaults.buttonColors(containerColor = MoroccanGold),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(text = closeText, color = SlateBlack, fontWeight = FontWeight.Bold)
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    val clipboard = context.getSystemService(android.content.Context.CLIPBOARD_SERVICE) as? android.content.ClipboardManager
-                    if (clipboard != null) {
-                        val clip = android.content.ClipData.newPlainText("Support Email", "morocobahia@gmail.com")
-                        clipboard.setPrimaryClip(clip)
-                    }
-                    Toast.makeText(context, "morocobahia@gmail.com", Toast.LENGTH_SHORT).show()
-                }
-            ) {
-                Text(text = copyText, color = LightGold, fontSize = 12.sp)
-            }
-        }
-    )
-}
-
-@Composable
-fun TermsOfServiceDialog(
-    appLanguage: String,
-    onDismiss: () -> Unit
-) {
-    val title = when (appLanguage) {
-        "ar" -> "شروط الاستخدام والخدمة"
-        "fr" -> "Conditions d'Utilisation"
-        else -> "Terms of Service"
-    }
-
-    val closeText = when (appLanguage) {
-        "ar" -> "إغلاق"
-        "fr" -> "Fermer"
-        else -> "Close"
-    }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(text = title, color = MoroccanGold, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-        },
-        containerColor = SlateBlack,
-        text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 350.dp)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                when (appLanguage) {
-                    "ar" -> {
-                        PrivacySectionItem(
-                            icon = Icons.Default.CheckCircle,
-                            title = "الاستخدام الشخصي والسياحي",
-                            body = "تم تطوير تطبيق 'Bahja Morocco Travel' كدليل سياحي وثقافي متكامل لمساعدة زوار وسكان المغرب في استكشاف المعالم والمدن وملاعب 2030."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Info,
-                            title = "دقة المعلومات",
-                            body = "نحرص دائماً على تحديث بيانات الأماكن، أوقات العمل، وأرقام الطوارئ، وتظل المعلومات الإرشادية عامة لخدمة تجربة سفر ممتعة."
-                        )
-                    }
-                    "fr" -> {
-                        PrivacySectionItem(
-                            icon = Icons.Default.CheckCircle,
-                            title = "Utilisation Touristique & Culturelle",
-                            body = "L'application Bahja Morocco Travel est un guide touristique premium pour explorer le Maroc et ses merveilles."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Info,
-                            title = "Précision des Informations",
-                            body = "Les informations fournies sont mises à jour régulièrement pour garantir une expérience de voyage optimale."
-                        )
-                    }
-                    else -> {
-                        PrivacySectionItem(
-                            icon = Icons.Default.CheckCircle,
-                            title = "Personal Travel Guide",
-                            body = "Bahja Morocco Travel is designed as a luxury cultural and travel guide for exploring Morocco and World Cup 2030 stadiums."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Info,
-                            title = "Information Accuracy",
-                            body = "We strive to maintain updated monument details, coordinates, and emergency contacts."
-                        )
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = onDismiss,
-                colors = ButtonDefaults.buttonColors(containerColor = MoroccanGold),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(text = closeText, color = SlateBlack, fontWeight = FontWeight.Bold)
-            }
-        }
-    )
-}
-
-@Composable
-fun DataSafetyDialog(
-    appLanguage: String,
-    onDismiss: () -> Unit
-) {
-    val title = when (appLanguage) {
-        "ar" -> "أمان وتشفير البيانات (Data Safety)"
-        "fr" -> "Sécurité des Données"
-        else -> "Data Safety & Security"
-    }
-
-    val closeText = when (appLanguage) {
-        "ar" -> "إغلاق"
-        "fr" -> "Fermer"
-        else -> "Close"
-    }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(text = title, color = MoroccanGold, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-        },
-        containerColor = SlateBlack,
-        text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 350.dp)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                when (appLanguage) {
-                    "ar" -> {
-                        PrivacySectionItem(
-                            icon = Icons.Default.Videocam,
-                            title = "معالجة الكاميرا محلياً 100% (مراقبة السائق)",
-                            body = "تعمل ميزة مراقبة يقظة السائق بالكامل داخل معالج هاتفك فقط لتحليل حركة العينين والوجه، ولا يتم تسجيل أو حفظ أو رفع أي صور أو فيديو إطلاقاً."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Shield,
-                            title = "تخزين معزول ومشفر",
-                            body = "جميع تفضيلاتك وسجلاتك محمية ضمن بيئة أندرويد المعزولة (Sandboxing) ولا يمكن لأي تطبيق آخر الوصول إليها."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.LockClock,
-                            title = "اتصالات شبكية مشفرة (HTTPS/TLS)",
-                            body = "أي طلب لمعلومات الطقس أو الخرائط يتم عبر بروتوكولات آمنة ومشفرة 100%."
-                        )
-                    }
-                    "fr" -> {
-                        PrivacySectionItem(
-                            icon = Icons.Default.Videocam,
-                            title = "Caméra Traitée 100% en Local",
-                            body = "La surveillance de la vigilance du conducteur analyse les mouvements des yeux en temps réel sur l'appareil sans jamais enregistrer ni envoyer d'images."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Shield,
-                            title = "Stockage Sandbox Sécurisé",
-                            body = "Vos données sont protégées par le bac à sable Android et chiffrées."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.LockClock,
-                            title = "Connexions Chiffrées HTTPS",
-                            body = "Toutes les requêtes de données transitent par des flux sécurisés TLS/HTTPS."
-                        )
-                    }
-                    else -> {
-                        PrivacySectionItem(
-                            icon = Icons.Default.Videocam,
-                            title = "100% On-Device Camera Processing",
-                            body = "Driver alertness monitoring processes facial landmarks in real-time memory only; zero images or videos are ever stored or uploaded."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.Shield,
-                            title = "Sandboxed Storage",
-                            body = "Your favorites and itineraries reside in local secure Android sandbox storage."
-                        )
-                        PrivacySectionItem(
-                            icon = Icons.Default.LockClock,
-                            title = "Encrypted Network (HTTPS)",
-                            body = "All weather and mapping services communicate over TLS-encrypted endpoints."
-                        )
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = onDismiss,
-                colors = ButtonDefaults.buttonColors(containerColor = MoroccanGold),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(text = closeText, color = SlateBlack, fontWeight = FontWeight.Bold)
-            }
-        }
-    )
-}
-
-@Composable
-fun PrivacySectionItem(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    title: String,
-    body: String
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .background(SlateBlack.copy(alpha = 0.5f), RoundedCornerShape(8.dp))
-            .border(0.5.dp, MoroccanGold.copy(alpha = 0.2f), RoundedCornerShape(8.dp))
-            .padding(10.dp)
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MoroccanGold,
-                modifier = Modifier.size(18.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = title,
-                color = PureWhite,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = body,
-            color = SilkWhite.copy(alpha = 0.85f),
-            fontSize = 12.sp,
-            lineHeight = 17.sp
-        )
-    }
-}
-
-fun getInitials(name: String?): String {
-    if (name.isNullOrBlank()) return "U"
-    val parts = name.trim().split("\\s+".toRegex())
-    return when {
-        parts.isEmpty() -> "U"
-        parts.size == 1 -> parts[0].take(2).uppercase()
-        else -> (parts[0].take(1) + parts[1].take(1)).uppercase()
-    }
-}
-
-fun saveImageToInternalStorage(context: android.content.Context, uri: Uri): String? {
-    return try {
-        val inputStream = context.contentResolver.openInputStream(uri) ?: return null
-        context.filesDir.listFiles()?.forEach { file ->
-            if (file.name.startsWith("profile_avatar")) {
-                file.delete()
-            }
-        }
-        val file = File(context.filesDir, "profile_avatar_${System.currentTimeMillis()}.jpg")
-        val outputStream = FileOutputStream(file)
-        inputStream.use { input ->
-            outputStream.use { output ->
-                input.copyTo(output)
-            }
-        }
-        file.absolutePath
-    } catch (e: Exception) {
-        android.util.Log.e("ProfileScreen", "Error saving image to internal storage", e)
-        null
-    }
-}
-
-@Composable
-fun SettingItemRow(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    title: String,
-    subtitle: String,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(vertical = 12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(icon, contentDescription = null, tint = MoroccanGold, modifier = Modifier.size(24.dp))
-            Spacer(modifier = Modifier.width(12.dp))
-            Column {
-                Text(text = title, color = PureWhite, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-                Text(text = subtitle, color = SoftGray, fontSize = 11.sp)
-            }
-        }
-        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = SoftGray)
-    }
-}
-
-@Composable
-fun InfoItemLinkRow(
-    title: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(vertical = 12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(icon, contentDescription = null, tint = MoroccanGold.copy(alpha = 0.7f), modifier = Modifier.size(20.dp))
-            Spacer(modifier = Modifier.width(12.dp))
-            Text(text = title, color = SilkWhite, fontSize = 14.sp)
-        }
-        Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null, tint = SoftGray, modifier = Modifier.size(16.dp))
-    }
-}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سياسة الخصوصية | Privacy Policy — Bahja Morocco Travel</title>
+  <meta name="description" content="سياسة الخصوصية لتطبيق Bahja Morocco Travel (بهجة) — Privacy Policy for the Bahja Morocco Travel app (Arabic & English)." />
+  <style>
+    :root { --bg:#0c1116; --surface:#151d24; --surface-alt:#1c2630; --gold:#d4af37; --gold-light:#f0d57c; --text:#e8e6df; --muted:#a9b1b8; --border:rgba(212,175,55,.25); }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:"Segoe UI",Tahoma,Arial,sans-serif; line-height:1.8; }
+    .container { max-width:860px; margin:0 auto; padding:24px 16px 60px; }
+    header { text-align:center; padding:24px 12px; border:1px solid var(--border); border-radius:16px; background:var(--surface); }
+    h1 { color:var(--gold); margin:8px 0 4px; font-size:1.9rem; }
+    .subtitle { color:var(--muted); margin:0 0 14px; }
+    .meta { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:16px; }
+    .meta span { background:var(--surface-alt); border:1px solid var(--border); border-radius:20px; padding:2px 12px; font-size:.85rem; color:var(--gold-light); }
+    .lang { display:flex; gap:10px; justify-content:center; }
+    .lang button { cursor:pointer; background:transparent; color:var(--gold); border:1px solid var(--gold); border-radius:10px; padding:8px 18px; font-size:1rem; font-weight:700; }
+    .lang button.active { background:var(--gold); color:#0c1116; }
+    section.policy { display:none; margin-top:20px; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:8px 22px 22px; }
+    section.policy.show { display:block; }
+    h2 { color:var(--gold); border-bottom:1px solid var(--border); padding-bottom:6px; margin-top:28px; font-size:1.25rem; }
+    h3 { color:var(--gold-light); margin-bottom:4px; font-size:1.05rem; }
+    p, li { color:var(--text); }
+    ul { padding-inline-start:22px; }
+    a { color:var(--gold-light); word-break:break-word; }
+    .callout { background:var(--surface-alt); border-inline-start:4px solid var(--gold); border-radius:8px; padding:10px 14px; margin:14px 0; }
+    table { width:100%; border-collapse:collapse; margin:10px 0; font-size:.92rem; display:block; overflow-x:auto; }
+    th, td { border:1px solid var(--border); padding:8px 10px; text-align:start; vertical-align:top; }
+    th { background:var(--surface-alt); color:var(--gold-light); }
+    footer { text-align:center; color:var(--muted); margin-top:24px; font-size:.85rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Bahja Morocco Travel — بهجة</h1>
+    <p class="subtitle">سياسة الخصوصية &nbsp;•&nbsp; Privacy Policy</p>
+    <div class="meta">
+      <span>📅 2026-10-03</span>
+      <span>📧 morocobahia@gmail.com</span>
+    </div>
+    <div class="lang">
+      <button id="btn-ar" onclick="setLang('ar')">🇲🇦 العربية</button>
+      <button id="btn-en" onclick="setLang('en')">🇬🇧 English</button>
+    </div>
+  </header>
+
+  <!-- ============================ ARABIC ============================ -->
+  <section id="policy-ar" class="policy" lang="ar" dir="rtl">
+    <h2>سياسة الخصوصية — تطبيق Bahja Morocco Travel (بهجة)</h2>
+    <p><strong>تاريخ السريان وآخر تحديث:</strong> 3 أكتوبر 2026</p>
+    <p>
+      توضح هذه السياسة كيف يتعامل تطبيق <strong>Bahja Morocco Travel</strong> («بهجة»، «نحن») مع المعلومات عند استخدامك للتطبيق على أندرويد
+      (معرّف الحزمة: <code>com.aistudio.bahjatravel2.kzmxpq</code>). باستخدامك التطبيق فإنك توافق على ما ورد هنا.
+    </p>
+    <div class="callout">
+      <strong>باختصار:</strong> نحن لا نبيع بياناتك. معظم بياناتك (المفضلة، الخطط، التقدّم، الرحلات المسجّلة) تبقى على هاتفك فقط.
+      التطبيق مجاني ويعرض إعلانات عبر <strong>Meta Audience Network (فيسبوك)</strong> التي قد تستخدم معرّف الإعلانات في جهازك.
+    </div>
+
+    <h2>1. البيانات التي نتعامل معها</h2>
+    <h3>أ) بيانات تبقى على جهازك فقط</h3>
+    <ul>
+      <li>الأماكن المفضلة، وخطط الرحلات اليومية المحفوظة، وتقدّم القراءة في المكتبة، ونقاط المستكشف (XP) وجواز السفر.</li>
+      <li>إعدادات التطبيق: اللغة، العملة، الميزانية اليومية، الوضع الداكن، وخيارات الإشعارات.</li>
+      <li>بيانات الملف الشخصي إن سجّلت الدخول (الاسم، البريد، الهاتف، الصورة): تُحفظ <strong>محلياً على جهازك</strong> ولا نملك خادماً لحسابات المستخدمين.</li>
+      <li>تسجيل الرحلات (اختياري): إن فعّلته بموافقتك، يحفظ التطبيق مسار رحلاتك والأماكن التي تزورها <strong>على جهازك فقط</strong> لإنشاء «شهادة المسافر». يمكنك إيقافه أو حذف بياناته في أي وقت.</li>
+    </ul>
+
+    <h3>ب) الموقع الجغرافي</h3>
+    <p>
+      بعد إذنك، يستخدم التطبيق موقعك الدقيق أو التقريبي <strong>أثناء استخدام التطبيق فقط</strong> (وليس في الخلفية) لعرض الأماكن القريبة، وحساب المسافات،
+      وتشغيل الخريطة والملاحة. لا نخزّن موقعك على خوادمنا. لكن بعض الميزات ترسل إحداثيات إلى خدمات خارجية لتعمل (انظر القسم 3).
+    </p>
+
+    <h3>ج) الكاميرا — ميزة مراقبة السائق</h3>
+    <p>
+      عند تشغيلك ميزة «مراقبة السائق» فقط وبعد إذنك الصريح، تُستخدم الكاميرا الأمامية لتحليل فتح/إغلاق العينين واتجاه الوجه <strong>لحظياً داخل جهازك</strong>
+      (بتقنية ML Kit على الجهاز) لتنبيهك عند النعاس أو التشتت. <strong>لا يتم تسجيل أو حفظ أو إرسال أي صورة أو فيديو.</strong>
+      تعمل الميزة بخدمة مقدّمة (Foreground Service) مع إشعار ظاهر، ويُستخدم إذن «العرض فوق التطبيقات الأخرى» لإظهار التنبيهات فقط.
+    </p>
+
+    <h3>د) بيانات تُرسل إلى جهات خارجية</h3>
+    <ul>
+      <li><strong>البريد الإلكتروني للتنبيهات (اختياري):</strong> إن أدخلت بريدك للاشتراك في التنبيهات والعروض، يُرسل إلى خدمة Google Apps Script ويُحفظ في جدول Google Sheets يملكه المطوّر. عند حذف الحساب من التطبيق يُرسل طلب حذف مع بريدك لحذفه من القائمة.</li>
+      <li><strong>الذكاء الاصطناعي (Google Gemini):</strong> عند إنشاء خطة رحلة أو استخدام المساعد، تُرسل النصوص المطلوبة (المدينة، الميزانية، التفضيلات، وسؤالك) إلى واجهة Google Gemini لتوليد الرد. لا تكتب معلومات شخصية حساسة في المحادثة.</li>
+      <li><strong>الإعلانات (Meta Audience Network):</strong> انظر القسم 2.</li>
+    </ul>
+
+    <h2>2. الإعلانات — Meta Audience Network (Facebook SDK)</h2>
+    <p>
+      لإبقاء التطبيق مجانياً نعرض إعلاناً شريطياً (Banner) وإعلاناً بينياً (Interstitial) وإعلان فيديو بمكافأة، عبر <strong>Meta Audience Network</strong>.
+      قد تقوم Meta وشركاؤها تلقائياً بجمع ومعالجة: <strong>معرّف الإعلانات (Advertising ID / GAID)</strong>، عنوان IP، معلومات الجهاز والنظام
+      (الطراز، إصدار أندرويد، اللغة، الشاشة، شركة الاتصالات)، وبيانات التفاعل مع الإعلان (المشاهدات والنقرات) — لعرض إعلانات مخصّصة أو غير مخصّصة، وقياس الأداء، ومنع الاحتيال.
+    </p>
+    <ul>
+      <li><strong>الاتحاد الأوروبي والمملكة المتحدة وسويسرا:</strong> لا تُطلب الإعلانات إلا بعد موافقتك الصريحة، ويمكنك تغيير اختيارك في أي وقت من: الإعدادات ← الخصوصية وخيارات الإعلانات.</li>
+      <li>يمكنك إعادة ضبط معرّف الإعلانات أو إيقاف تخصيص الإعلانات من إعدادات أندرويد (Google ← الإعلانات).</li>
+      <li>سياسة خصوصية Meta: <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener noreferrer">https://www.facebook.com/privacy/policy/</a></li>
+      <li>تفضيلات الإعلانات في Meta: <a href="https://www.facebook.com/settings?tab=ads" target="_blank" rel="noopener noreferrer">https://www.facebook.com/settings?tab=ads</a></li>
+      <li>تُمنح مكافأة الفيديو (إعفاء من الإعلانات البينية لفترة محدّدة) فقط بعد إتمام مشاهدة الإعلان.</li>
+    </ul>
+
+    <h2>3. الخدمات الخارجية التي يستخدمها التطبيق</h2>
+    <p>عند استخدام الميزات التالية، يتصل جهازك بهذه الجهات وتستقبل عنوان IP وما يلزم لتنفيذ الطلب. لكل جهة سياسة خصوصية مستقلة:</p>
+    <table>
+      <tr><th>الخدمة</th><th>الغرض</th><th>ما قد يُرسل</th></tr>
+      <tr><td>Meta Audience Network</td><td>الإعلانات</td><td>معرّف الإعلانات، IP، بيانات الجهاز، تفاعل الإعلان</td></tr>
+      <tr><td>Google Gemini API</td><td>خطط الرحلات والمساعد الذكي</td><td>نص الطلب (مدينة، ميزانية، تفضيلات، أسئلة)</td></tr>
+      <tr><td>Google Play Services / Play Review</td><td>خدمات الموقع وتقييم التطبيق وتسجيل الدخول بحساب Google</td><td>حسب سياسة Google</td></tr>
+      <tr><td>Google Sheets / Apps Script</td><td>تحديث الأماكن والتنبيهات، واشتراك البريد</td><td>IP؛ والبريد إن اشتركت</td></tr>
+      <tr><td>OpenStreetMap (الخرائط، Nominatim) و Overpass</td><td>عرض الخريطة والبحث عن أماكن</td><td>نص البحث وإحداثيات منطقة الخريطة</td></tr>
+      <tr><td>OSRM (Project OSRM)</td><td>حساب مسار القيادة</td><td>إحداثيات نقطة البداية والوجهة</td></tr>
+      <tr><td>Open-Meteo</td><td>حالة الطقس</td><td>إحداثيات الموقع</td></tr>
+      <tr><td>Mapillary</td><td>صور الشوارع</td><td>إحداثيات المكان المعروض</td></tr>
+      <tr><td>Pexels / Unsplash / Wikimedia</td><td>صور الأماكن</td><td>اسم المكان كنص بحث</td></tr>
+    </table>
+    <p>
+      روابط: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google</a> •
+      <a href="https://wiki.osmfoundation.org/wiki/Privacy_Policy" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> •
+      <a href="https://open-meteo.com/en/terms" target="_blank" rel="noopener noreferrer">Open-Meteo</a> •
+      <a href="https://www.pexels.com/privacy-policy/" target="_blank" rel="noopener noreferrer">Pexels</a> •
+      <a href="https://unsplash.com/privacy" target="_blank" rel="noopener noreferrer">Unsplash</a> •
+      <a href="https://www.mapillary.com/privacy" target="_blank" rel="noopener noreferrer">Mapillary</a>
+    </p>
+
+    <h2>4. الأذونات التي يطلبها التطبيق</h2>
+    <ul>
+      <li><strong>الموقع (دقيق/تقريبي):</strong> الأماكن القريبة والخريطة والملاحة.</li>
+      <li><strong>الكاميرا:</strong> مراقبة السائق فقط (معالجة محلية دون حفظ).</li>
+      <li><strong>الإشعارات:</strong> التنبيهات وإشعار خدمة مراقبة السائق.</li>
+      <li><strong>العرض فوق التطبيقات الأخرى:</strong> تنبيهات مراقبة السائق أثناء القيادة.</li>
+      <li><strong>الإنترنت وحالة الشبكة، وإيقاظ الجهاز، والاهتزاز:</strong> تشغيل الخرائط والخدمات والتنبيهات.</li>
+      <li><strong>معرّف الإعلانات (AD_ID):</strong> للإعلانات كما في القسم 2.</li>
+    </ul>
+    <p>يمكنك سحب أي إذن في أي وقت من إعدادات الهاتف، وقد تتوقف الميزة المرتبطة به.</p>
+
+    <h2>5. المشاركة عبر التطبيقات الأخرى</h2>
+    <p>
+      يمكنك مشاركة الأماكن أو الشهادة عبر واتساب أو فيسبوك أو إنستغرام أو تيليغرام أو X. تتم المشاركة بضغطتك أنت عبر نظام أندرويد،
+      ويتحقق التطبيق فقط من وجود هذه التطبيقات على جهازك لإظهار أزرار المشاركة. تخضع المحتويات المشاركة لسياسات تلك التطبيقات.
+    </p>
+
+    <h2>6. الاحتفاظ بالبيانات وحذفها</h2>
+    <ul>
+      <li>البيانات المحلية تبقى على جهازك حتى تحذفها أو تحذف التطبيق.</li>
+      <li>من الملف الشخصي ← «حذف الحساب/البيانات» يُمسح كل ما هو محلي (قواعد البيانات والتفضيلات والملفات والذاكرة المؤقتة)، ويُرسَل طلب حذف لبريدك من قائمة التنبيهات إن كنت مشتركاً.</li>
+      <li>يمكنك أيضاً مراسلتنا على <a href="mailto:morocobahia@gmail.com">morocobahia@gmail.com</a> لطلب حذف بريدك من قائمتنا.</li>
+      <li>قد يحفظ نظام أندرويد نسخاً احتياطية من إعدادات التطبيق ضمن حسابك في Google حسب إعدادات هاتفك.</li>
+    </ul>
+
+    <h2>7. حقوقك</h2>
+    <p>
+      بحسب قوانين بلدك (مثل اللائحة الأوروبية GDPR، وقانون كاليفورنيا CCPA، والقانون المغربي رقم 09-08 لحماية المعطيات الشخصية)، لك الحق في الاطلاع على بياناتك وتصحيحها وحذفها،
+      وسحب الموافقة، والاعتراض على المعالجة. نحن <strong>لا نبيع</strong> المعلومات الشخصية. للممارسة حقوقك راسلنا على البريد أدناه.
+      يمكن للمقيمين في المغرب التواصل أيضاً مع اللجنة الوطنية لمراقبة حماية المعطيات ذات الطابع الشخصي (CNDP).
+    </p>
+
+    <h2>8. الأطفال</h2>
+    <p>التطبيق غير موجّه للأطفال دون 13 سنة (أو دون 16 في بعض دول الاتحاد الأوروبي)، ولا نجمع عمداً بيانات منهم. إن علمتَ أن طفلاً قدّم بيانات فراسلنا لنحذفها.</p>
+
+    <h2>9. الأمان</h2>
+    <p>نعتمد على اتصالات مشفّرة (HTTPS) كلما أمكن، ونُبقي بياناتك الأساسية على جهازك. لا توجد وسيلة نقل أو تخزين آمنة بنسبة 100%.</p>
+
+    <h2>10. التحديثات على السياسة</h2>
+    <p>قد نحدّث هذه السياسة، وسنعرض تاريخ آخر تحديث في أعلاها. استمرارك في استخدام التطبيق بعد التحديث يعني قبولك له.</p>
+
+    <h2>11. اتصل بنا</h2>
+    <p>📧 <a href="mailto:morocobahia@gmail.com">morocobahia@gmail.com</a></p>
+  </section>
+
+  <!-- ============================ ENGLISH ============================ -->
+  <section id="policy-en" class="policy" lang="en" dir="ltr">
+    <h2>Privacy Policy — Bahja Morocco Travel</h2>
+    <p><strong>Effective &amp; last updated:</strong> October 3, 2026</p>
+    <p>
+      This Privacy Policy explains how <strong>Bahja Morocco Travel</strong> ("Bahja", "we", "us") handles information when you use our Android app
+      (package: <code>com.aistudio.bahjatravel2.kzmxpq</code>). By using the app you agree to this policy.
+    </p>
+    <div class="callout">
+      <strong>In short:</strong> we do not sell your data. Most of your data (favorites, plans, progress, recorded trips) stays on your phone only.
+      The app is free and shows ads through <strong>Meta Audience Network (Facebook)</strong>, which may use your device's advertising ID.
+    </div>
+
+    <h2>1. Information we handle</h2>
+    <h3>A) Data that stays on your device only</h3>
+    <ul>
+      <li>Favorite places, saved daily itineraries, library reading progress, Explorer XP and passport.</li>
+      <li>App settings: language, currency, daily budget, dark mode, notification choices.</li>
+      <li>Profile details if you sign in (name, email, phone, photo) are stored <strong>locally on your device</strong>; we do not operate a user-account server.</li>
+      <li>Trip recording (optional): if you enable it with your consent, the app saves your trip paths and visited places <strong>on your device only</strong> to build your "Traveler Certificate". You can turn it off or erase it at any time.</li>
+    </ul>
+
+    <h3>B) Location</h3>
+    <p>
+      With your permission, the app uses your precise or approximate location <strong>only while you use the app</strong> (not in the background) to show nearby places,
+      calculate distances, and power the map and navigation. We do not store your location on our servers. However, some features send coordinates to third-party services in order to work (see Section 3).
+    </p>
+
+    <h3>C) Camera — Driver Monitor feature</h3>
+    <p>
+      Only when you turn on "Driver Monitor" and grant camera permission, the front camera is used to analyze eye openness and head direction <strong>in real time on your device</strong>
+      (on-device ML Kit) to alert you if you are drowsy or distracted. <strong>No photo or video is recorded, saved, or sent anywhere.</strong>
+      The feature runs as a foreground service with a visible notification; the "display over other apps" permission is used only to show alerts.
+    </p>
+
+    <h3>D) Data sent to third parties</h3>
+    <ul>
+      <li><strong>Email for alerts (optional):</strong> if you enter your email to receive alerts and offers, it is sent to a Google Apps Script endpoint and stored in a Google Sheet owned by the developer. When you delete your account in the app, a deletion request with your email is sent so it can be removed.</li>
+      <li><strong>AI (Google Gemini):</strong> when you generate a trip plan or use the assistant, the text needed (city, budget, preferences, your question) is sent to the Google Gemini API to generate the answer. Please do not type sensitive personal information in the chat.</li>
+      <li><strong>Advertising (Meta Audience Network):</strong> see Section 2.</li>
+    </ul>
+
+    <h2>2. Advertising — Meta Audience Network (Facebook SDK)</h2>
+    <p>
+      To keep the app free we show a Banner ad, an Interstitial ad, and a Rewarded Video ad through <strong>Meta Audience Network</strong>.
+      Meta and its partners may automatically collect and process: your <strong>Advertising ID (GAID)</strong>, IP address, device and system information
+      (model, Android version, language, screen, carrier), and ad interaction data (impressions, clicks) to deliver personalized or non-personalized ads, measure performance, and prevent fraud.
+    </p>
+    <ul>
+      <li><strong>EEA, UK and Switzerland:</strong> ad requests are made only after your explicit consent. You can change your choice anytime in Settings → Privacy &amp; Ads Choices.</li>
+      <li>You can reset your advertising ID or opt out of ad personalization in Android settings (Google → Ads).</li>
+      <li>Meta Privacy Policy: <a href="https://www.facebook.com/privacy/policy/" target="_blank" rel="noopener noreferrer">https://www.facebook.com/privacy/policy/</a></li>
+      <li>Meta ad preferences: <a href="https://www.facebook.com/settings?tab=ads" target="_blank" rel="noopener noreferrer">https://www.facebook.com/settings?tab=ads</a></li>
+      <li>The rewarded-video benefit (a period free of interstitial ads) is granted only after the ad is watched to completion.</li>
+    </ul>
+
+    <h2>3. Third-party services used by the app</h2>
+    <p>When you use the features below, your device connects to these providers, which receive your IP address and what is needed to fulfil the request. Each has its own privacy policy:</p>
+    <table>
+      <tr><th>Service</th><th>Purpose</th><th>What may be sent</th></tr>
+      <tr><td>Meta Audience Network</td><td>Advertising</td><td>Advertising ID, IP, device data, ad interaction</td></tr>
+      <tr><td>Google Gemini API</td><td>Trip plans &amp; AI assistant</td><td>Request text (city, budget, preferences, questions)</td></tr>
+      <tr><td>Google Play Services / Play Review</td><td>Location services, in-app rating, Google sign-in</td><td>As per Google's policy</td></tr>
+      <tr><td>Google Sheets / Apps Script</td><td>Places &amp; alerts updates, email subscription</td><td>IP; email if you subscribe</td></tr>
+      <tr><td>OpenStreetMap (tiles, Nominatim) &amp; Overpass</td><td>Map display and place search</td><td>Search text and map-area coordinates</td></tr>
+      <tr><td>OSRM (Project OSRM)</td><td>Driving routes</td><td>Start and destination coordinates</td></tr>
+      <tr><td>Open-Meteo</td><td>Weather</td><td>Location coordinates</td></tr>
+      <tr><td>Mapillary</td><td>Street-level imagery</td><td>Coordinates of the displayed place</td></tr>
+      <tr><td>Pexels / Unsplash / Wikimedia</td><td>Place photos</td><td>Place name as search text</td></tr>
+    </table>
+    <p>
+      Links: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google</a> •
+      <a href="https://wiki.osmfoundation.org/wiki/Privacy_Policy" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> •
+      <a href="https://open-meteo.com/en/terms" target="_blank" rel="noopener noreferrer">Open-Meteo</a> •
+      <a href="https://www.pexels.com/privacy-policy/" target="_blank" rel="noopener noreferrer">Pexels</a> •
+      <a href="https://unsplash.com/privacy" target="_blank" rel="noopener noreferrer">Unsplash</a> •
+      <a href="https://www.mapillary.com/privacy" target="_blank" rel="noopener noreferrer">Mapillary</a>
+    </p>
+
+    <h2>4. Permissions the app requests</h2>
+    <ul>
+      <li><strong>Location (precise/approximate):</strong> nearby places, map and navigation.</li>
+      <li><strong>Camera:</strong> Driver Monitor only (on-device processing, nothing saved).</li>
+      <li><strong>Notifications:</strong> alerts and the Driver Monitor service notification.</li>
+      <li><strong>Display over other apps:</strong> Driver Monitor alerts while driving.</li>
+      <li><strong>Internet &amp; network state, wake lock, vibration:</strong> maps, services and alerts.</li>
+      <li><strong>Advertising ID (AD_ID):</strong> advertising as described in Section 2.</li>
+    </ul>
+    <p>You can revoke any permission at any time in your phone settings; the related feature may stop working.</p>
+
+    <h2>5. Sharing through other apps</h2>
+    <p>
+      You can share places or your certificate via WhatsApp, Facebook, Instagram, Telegram or X. Sharing happens only when you tap, through Android's share sheet.
+      The app only checks whether these apps are installed in order to show share buttons. Shared content is governed by those apps' policies.
+    </p>
+
+    <h2>6. Retention and deletion</h2>
+    <ul>
+      <li>Local data stays on your device until you delete it or uninstall the app.</li>
+      <li>Profile → "Delete account/data" erases all local data (databases, preferences, files, caches) and sends a deletion request for your email from the alerts list if you subscribed.</li>
+      <li>You can also email <a href="mailto:morocobahia@gmail.com">morocobahia@gmail.com</a> to ask us to remove your email from our list.</li>
+      <li>Android may back up app settings to your Google account depending on your phone's backup settings.</li>
+    </ul>
+
+    <h2>7. Your rights</h2>
+    <p>
+      Depending on your country's laws (e.g., EU GDPR, UK GDPR, California CCPA, Moroccan Law 09-08), you may have the right to access, correct and delete your data,
+      withdraw consent, and object to processing. We <strong>do not sell</strong> personal information. To exercise your rights, email us at the address below.
+      Residents of Morocco may also contact the CNDP (National Commission for the Control of Personal Data Protection).
+    </p>
+
+    <h2>8. Children</h2>
+    <p>The app is not directed to children under 13 (or under 16 in some EU countries) and we do not knowingly collect their data. If you believe a child has provided data, contact us and we will delete it.</p>
+
+    <h2>9. Security</h2>
+    <p>We use encrypted connections (HTTPS) where possible and keep your core data on your device. No method of transmission or storage is 100% secure.</p>
+
+    <h2>10. Changes to this policy</h2>
+    <p>We may update this policy; the last-updated date appears at the top. Continued use of the app after an update means you accept it.</p>
+
+    <h2>11. Contact us</h2>
+    <p>📧 <a href="mailto:morocobahia@gmail.com">morocobahia@gmail.com</a></p>
+  </section>
+
+  <footer>© 2026 Bahja Morocco Travel</footer>
+</div>
+
+<script>
+  function setLang(l) {
+    document.documentElement.lang = l;
+    document.documentElement.dir = (l === 'ar') ? 'rtl' : 'ltr';
+    ['ar', 'en'].forEach(function (x) {
+      document.getElementById('policy-' + x).classList.toggle('show', x === l);
+      document.getElementById('btn-' + x).classList.toggle('active', x === l);
+    });
+    try { history.replaceState(null, '', '#' + l); } catch (e) {}
+  }
+  (function () {
+    var h = (location.hash || '').replace('#', '');
+    var l = (h === 'en' || h === 'ar') ? h : ((navigator.language || 'ar').toLowerCase().indexOf('ar') === 0 ? 'ar' : 'en');
+    setLang(l);
+  })();
+</script>
+</body>
+</html>

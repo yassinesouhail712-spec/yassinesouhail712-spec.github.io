@@ -38,7 +38,7 @@
     <h1>Bahja Morocco Travel — بهجة</h1>
     <p class="subtitle">سياسة الخصوصية &nbsp;•&nbsp; Privacy Policy</p>
     <div class="meta">
-      <span>📅 2026-10-04</span>
+      <span>📅 2026-10-26</span>
       <span>📧 morocobahia@gmail.com</span>
     </div>
     <div class="lang">
@@ -50,14 +50,15 @@
   <!-- ============================ ARABIC ============================ -->
   <section id="policy-ar" class="policy" lang="ar" dir="rtl">
     <h2>سياسة الخصوصية — تطبيق Bahja Morocco Travel (بهجة)</h2>
-    <p><strong>تاريخ السريان وآخر تحديث:</strong> 4 أكتوبر 2026</p>
+    <p><strong>تاريخ السريان وآخر تحديث:</strong> 26 أكتوبر 2026</p>
     <p>
       توضح هذه السياسة كيف يتعامل تطبيق <strong>Bahja Morocco Travel</strong> («بهجة»، «نحن») مع المعلومات عند استخدامك للتطبيق على أندرويد
       (معرّف الحزمة: <code>com.aistudio.bahjatravel2.kzmxpq</code>). باستخدامك التطبيق فإنك توافق على ما ورد هنا.
     </p>
     <div class="callout">
-      <strong>باختصار:</strong> نحن لا نبيع بياناتك. معظم بياناتك (المفضلة، الخطط، التقدّم، الرحلات المسجّلة) تبقى على هاتفك فقط.
-      التطبيق مجاني ويعرض إعلانات عبر <strong>Google AdMob</strong> التي قد تستخدم معرّف الإعلانات في جهازك.
+      <strong>باختصار:</strong> نحن لا نبيع بياناتك الشخصية. معظم بياناتك (المفضلة، الخطط، التقدّم، الرحلات المسجّلة) تبقى على هاتفك فقط.
+      التطبيق مجاني ويعرض إعلانات عبر شبكة <strong>Start.io</strong> التي قد تستخدم معرّف الإعلانات في جهازك،
+      ونستخدم <strong>Firebase Analytics</strong> لمعرفة عدد مستخدمي التطبيق والميزات الأكثر استخداماً.
     </div>
 
     <h2>1. البيانات التي نتعامل معها</h2>
@@ -72,7 +73,7 @@
     <h3>ب) الموقع الجغرافي</h3>
     <p>
       بعد إذنك، يستخدم التطبيق موقعك الدقيق أو التقريبي <strong>أثناء استخدام التطبيق فقط</strong> (وليس في الخلفية) لعرض الأماكن القريبة، وحساب المسافات،
-      وتشغيل الخريطة والملاحة. لا نخزّن موقعك على خوادمنا. لكن بعض الميزات ترسل إحداثيات إلى خدمات خارجية لتعمل (انظر القسم 3).
+      وتشغيل الخريطة والملاحة. لا نخزّن موقعك على خوادمنا. لكن بعض الميزات ترسل إحداثيات إلى خدمات خارجية لتعمل (انظر القسم 4).
     </p>
 
     <h3>ج) الكاميرا — ميزة مراقبة السائق</h3>
@@ -85,30 +86,45 @@
     <h3>د) بيانات تُرسل إلى جهات خارجية</h3>
     <ul>
       <li><strong>البريد الإلكتروني للتنبيهات (اختياري):</strong> إن أدخلت بريدك للاشتراك في التنبيهات والعروض، يُرسل إلى خدمة Google Apps Script ويُحفظ في جدول Google Sheets يملكه المطوّر. عند حذف الحساب من التطبيق يُرسل طلب حذف مع بريدك لحذفه من القائمة.</li>
-      <li><strong>الإعلانات (Google AdMob):</strong> انظر القسم 2.</li>
+      <li><strong>الإعلانات (Start.io):</strong> انظر القسم 2.</li>
+      <li><strong>التحليلات (Firebase Analytics):</strong> انظر القسم 3.</li>
+      <li><strong>الإشعارات الفورية (Firebase Cloud Messaging):</strong> انظر القسم 4.</li>
     </ul>
 
-    <h2>2. الإعلانات — Google AdMob</h2>
+    <h2>2. الإعلانات — Start.io</h2>
     <p>
-      لإبقاء التطبيق مجانياً نعرض إعلاناً شريطياً (Banner) وإعلاناً بينياً (Interstitial) وإعلان فيديو بمكافأة (Rewarded)، عبر <strong>Google AdMob</strong>.
-      قد تقوم Google وشركاؤها تلقائياً بجمع ومعالجة: <strong>معرّف الإعلانات (Advertising ID / GAID)</strong>، عنوان IP، معلومات الجهاز والنظام
-      (الطراز، إصدار أندرويد، اللغة، الشاشة، شركة الاتصالات)، وبيانات التفاعل مع الإعلان (المشاهدات والنقرات)، وبيانات التشخيص — لعرض إعلانات مخصّصة أو غير مخصّصة، وقياس الأداء، ومنع الاحتيال.
-      قد تستخدم Google ملفات تعريف الارتباط أو معرّفات مشابهة لهذا الغرض.
+      لإبقاء التطبيق مجانياً نعرض إعلاناً شريطياً (Banner) وإعلاناً بينياً (Interstitial) وإعلان فيديو بمكافأة (Rewarded)، عبر شبكة الإعلانات <strong>Start.io</strong>.
+      قد تقوم Start.io وشركاؤها الإعلانيون تلقائياً بجمع ومعالجة: <strong>معرّف الإعلانات (Advertising ID / GAID)</strong>، عنوان IP، معلومات الجهاز والنظام
+      (الطراز، إصدار أندرويد، اللغة، الشاشة، شركة الاتصالات)، الموقع التقريبي المستنتج من عنوان IP، وبيانات التفاعل مع الإعلان (المشاهدات والنقرات)، وبيانات التشخيص — لعرض إعلانات مخصّصة أو غير مخصّصة، وقياس الأداء، ومنع الاحتيال.
+      قد تستخدم هذه الجهات معرّفات مشابهة لملفات تعريف الارتباط لهذا الغرض.
     </p>
     <ul>
-      <li><strong>الاتحاد الأوروبي والمملكة المتحدة وسويسرا:</strong> لا تُطلب الإعلانات إلا بعد موافقتك الصريحة، ويمكنك تغيير اختيارك في أي وقت من: الإعدادات ← الخصوصية وخيارات الإعلانات.</li>
+      <li><strong>الاتحاد الأوروبي والمملكة المتحدة وسويسرا:</strong> حيثما يشترط القانون، لا تُعرض الإعلانات المخصّصة إلا بموافقتك، ويمكنك تغيير اختيارك في أي وقت.</li>
       <li>يمكنك إعادة ضبط معرّف الإعلانات أو إيقاف تخصيص الإعلانات من إعدادات أندرويد (Google ← الإعلانات).</li>
-      <li>كيف تستخدم Google البيانات من التطبيقات الشريكة: <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">https://policies.google.com/technologies/partner-sites</a></li>
-      <li>البيانات التي يجمعها AdMob: <a href="https://support.google.com/admob/answer/6128543" target="_blank" rel="noopener noreferrer">https://support.google.com/admob/answer/6128543</a></li>
-      <li>سياسة خصوصية Google: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">https://policies.google.com/privacy</a></li>
+      <li>سياسة خصوصية Start.io: <a href="https://www.start.io/policy/privacy-policy" target="_blank" rel="noopener noreferrer">https://www.start.io/policy/privacy-policy</a></li>
       <li>تُمنح مكافأة الفيديو (إعفاء من الإعلانات البينية لفترة محدّدة) فقط بعد إتمام مشاهدة الإعلان.</li>
     </ul>
 
-    <h2>3. الخدمات الخارجية التي يستخدمها التطبيق</h2>
+    <h2>3. التحليلات — Firebase Analytics</h2>
+    <p>
+      نستخدم خدمة <strong>Google Analytics for Firebase</strong> لفهم كيفية استخدام التطبيق وتحسينه. عند استخدامك للتطبيق تُسجَّل تلقائياً أحداث مثل:
+      فتح التطبيق، بدء الجلسة ومدتها، والشاشات التي تفتحها، والميزات التي تستخدمها (مثل الخريطة وخطط الرحلات والملاحة والمفضلة).
+      نستعمل ذلك لمعرفة <strong>عدد الأشخاص الذين يفتحون التطبيق وعدد المستخدمين النشطين</strong>، ولمعرفة <strong>الميزات الأكثر طلباً</strong> حتى نطوّرها.
+    </p>
+    <ul>
+      <li>تُجمع كذلك معلومات تقنية مثل: معرّف مجهول لتثبيت التطبيق (App Instance ID)، طراز الجهاز، إصدار أندرويد، اللغة، البلد/المدينة التقريبية (من عنوان IP)، وقد يُستخدم معرّف الإعلانات.</li>
+      <li>لا نستخدم هذه البيانات لتحديد هويتك، ولا نربطها باسمك أو بريدك أو رقم هاتفك.</li>
+      <li>تُعالَج البيانات بواسطة Google بصفتها مزوّد الخدمة. للمزيد: <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">https://firebase.google.com/support/privacy</a></li>
+      <li>يمكنك الحدّ من التتبّع بإعادة ضبط معرّف الإعلانات أو إيقاف تخصيص الإعلانات من إعدادات أندرويد.</li>
+    </ul>
+
+    <h2>4. الخدمات الخارجية التي يستخدمها التطبيق</h2>
     <p>عند استخدام الميزات التالية، يتصل جهازك بهذه الجهات وتستقبل عنوان IP وما يلزم لتنفيذ الطلب. لكل جهة سياسة خصوصية مستقلة:</p>
     <table>
       <tr><th>الخدمة</th><th>الغرض</th><th>ما قد يُرسل</th></tr>
-      <tr><td>Google AdMob</td><td>الإعلانات</td><td>معرّف الإعلانات، IP، بيانات الجهاز، تفاعل الإعلان</td></tr>
+      <tr><td>Start.io</td><td>الإعلانات</td><td>معرّف الإعلانات، IP، بيانات الجهاز، تفاعل الإعلان</td></tr>
+      <tr><td>Firebase Analytics (Google)</td><td>إحصاءات الاستخدام وعدد المستخدمين</td><td>أحداث الاستخدام، معرّف التثبيت المجهول، بيانات الجهاز، الموقع التقريبي</td></tr>
+      <tr><td>Firebase Cloud Messaging (Google)</td><td>الإشعارات الفورية حتى والتطبيق مغلق</td><td>رمز الجهاز (token) ومعرّف التثبيت</td></tr>
       <tr><td>Google Play Services / Play Review</td><td>خدمات الموقع وتقييم التطبيق وتسجيل الدخول بحساب Google</td><td>حسب سياسة Google</td></tr>
       <tr><td>Google Sheets / Apps Script</td><td>تحديث الأماكن والتنبيهات، واشتراك البريد</td><td>IP؛ والبريد إن اشتركت</td></tr>
       <tr><td>OpenStreetMap (الخرائط، Nominatim) و Overpass</td><td>عرض الخريطة والبحث عن أماكن</td><td>نص البحث وإحداثيات منطقة الخريطة</td></tr>
@@ -118,7 +134,9 @@
       <tr><td>Pexels / Unsplash / Wikimedia</td><td>صور الأماكن</td><td>اسم المكان كنص بحث</td></tr>
     </table>
     <p>
-      روابط: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google</a> •
+      روابط: <a href="https://www.start.io/policy/privacy-policy" target="_blank" rel="noopener noreferrer">Start.io</a> •
+      <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">Firebase</a> •
+      <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google</a> •
       <a href="https://wiki.osmfoundation.org/wiki/Privacy_Policy" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> •
       <a href="https://open-meteo.com/en/terms" target="_blank" rel="noopener noreferrer">Open-Meteo</a> •
       <a href="https://www.pexels.com/privacy-policy/" target="_blank" rel="noopener noreferrer">Pexels</a> •
@@ -126,62 +144,64 @@
       <a href="https://www.mapillary.com/privacy" target="_blank" rel="noopener noreferrer">Mapillary</a>
     </p>
 
-    <h2>4. الأذونات التي يطلبها التطبيق</h2>
+    <h2>5. الأذونات التي يطلبها التطبيق</h2>
     <ul>
       <li><strong>الموقع (دقيق/تقريبي):</strong> الأماكن القريبة والخريطة والملاحة.</li>
       <li><strong>الكاميرا:</strong> مراقبة السائق فقط (معالجة محلية دون حفظ).</li>
       <li><strong>الإشعارات:</strong> التنبيهات وإشعار خدمة مراقبة السائق.</li>
       <li><strong>العرض فوق التطبيقات الأخرى:</strong> تنبيهات مراقبة السائق أثناء القيادة.</li>
       <li><strong>الإنترنت وحالة الشبكة، وإيقاظ الجهاز، والاهتزاز:</strong> تشغيل الخرائط والخدمات والتنبيهات.</li>
-      <li><strong>معرّف الإعلانات (AD_ID):</strong> للإعلانات كما في القسم 2.</li>
+      <li><strong>معرّف الإعلانات (AD_ID):</strong> للإعلانات والتحليلات كما في القسمين 2 و3.</li>
     </ul>
     <p>يمكنك سحب أي إذن في أي وقت من إعدادات الهاتف، وقد تتوقف الميزة المرتبطة به.</p>
 
-    <h2>5. المشاركة عبر التطبيقات الأخرى</h2>
+    <h2>6. المشاركة عبر التطبيقات الأخرى</h2>
     <p>
       يمكنك مشاركة الأماكن أو الشهادة عبر واتساب أو فيسبوك أو إنستغرام أو تيليغرام أو X. تتم المشاركة بضغطتك أنت عبر نظام أندرويد،
       ويتحقق التطبيق فقط من وجود هذه التطبيقات على جهازك لإظهار أزرار المشاركة. تخضع المحتويات المشاركة لسياسات تلك التطبيقات.
     </p>
 
-    <h2>6. الاحتفاظ بالبيانات وحذفها</h2>
+    <h2>7. الاحتفاظ بالبيانات وحذفها</h2>
     <ul>
       <li>البيانات المحلية تبقى على جهازك حتى تحذفها أو تحذف التطبيق.</li>
       <li>من الملف الشخصي ← «حذف الحساب/البيانات» يُمسح كل ما هو محلي (قواعد البيانات والتفضيلات والملفات والذاكرة المؤقتة)، ويُرسَل طلب حذف لبريدك من قائمة التنبيهات إن كنت مشتركاً.</li>
       <li>يمكنك أيضاً مراسلتنا على <a href="mailto:morocobahia@gmail.com">morocobahia@gmail.com</a> لطلب حذف بريدك من قائمتنا.</li>
+      <li>بيانات التحليلات والإعلانات تحتفظ بها Firebase وStart.io وفق سياساتهما، ويمكنك طلب حذفها بمراسلتنا أو بإعادة ضبط معرّف الإعلانات.</li>
       <li>قد يحفظ نظام أندرويد نسخاً احتياطية من إعدادات التطبيق ضمن حسابك في Google حسب إعدادات هاتفك.</li>
     </ul>
 
-    <h2>7. حقوقك</h2>
+    <h2>8. حقوقك</h2>
     <p>
       بحسب قوانين بلدك (مثل اللائحة الأوروبية GDPR، وقانون كاليفورنيا CCPA، والقانون المغربي رقم 09-08 لحماية المعطيات الشخصية)، لك الحق في الاطلاع على بياناتك وتصحيحها وحذفها،
-      وسحب الموافقة، والاعتراض على المعالجة. نحن <strong>لا نبيع</strong> المعلومات الشخصية. للممارسة حقوقك راسلنا على البريد أدناه.
+      وسحب الموافقة، والاعتراض على المعالجة. نحن <strong>لا نبيع</strong> بياناتك الشخصية بأنفسنا. للممارسة حقوقك راسلنا على البريد أدناه.
       يمكن للمقيمين في المغرب التواصل أيضاً مع اللجنة الوطنية لمراقبة حماية المعطيات ذات الطابع الشخصي (CNDP).
     </p>
 
-    <h2>8. الأطفال</h2>
+    <h2>9. الأطفال</h2>
     <p>التطبيق غير موجّه للأطفال دون 13 سنة (أو دون 16 في بعض دول الاتحاد الأوروبي)، ولا نجمع عمداً بيانات منهم. إن علمتَ أن طفلاً قدّم بيانات فراسلنا لنحذفها.</p>
 
-    <h2>9. الأمان</h2>
+    <h2>10. الأمان</h2>
     <p>نعتمد على اتصالات مشفّرة (HTTPS) كلما أمكن، ونُبقي بياناتك الأساسية على جهازك. لا توجد وسيلة نقل أو تخزين آمنة بنسبة 100%.</p>
 
-    <h2>10. التحديثات على السياسة</h2>
+    <h2>11. التحديثات على السياسة</h2>
     <p>قد نحدّث هذه السياسة، وسنعرض تاريخ آخر تحديث في أعلاها. استمرارك في استخدام التطبيق بعد التحديث يعني قبولك له.</p>
 
-    <h2>11. اتصل بنا</h2>
+    <h2>12. اتصل بنا</h2>
     <p>📧 <a href="mailto:morocobahia@gmail.com">morocobahia@gmail.com</a></p>
   </section>
 
   <!-- ============================ ENGLISH ============================ -->
   <section id="policy-en" class="policy" lang="en" dir="ltr">
     <h2>Privacy Policy — Bahja Morocco Travel</h2>
-    <p><strong>Effective &amp; last updated:</strong> October 4, 2026</p>
+    <p><strong>Effective &amp; last updated:</strong> October 26, 2026</p>
     <p>
       This Privacy Policy explains how <strong>Bahja Morocco Travel</strong> ("Bahja", "we", "us") handles information when you use our Android app
       (package: <code>com.aistudio.bahjatravel2.kzmxpq</code>). By using the app you agree to this policy.
     </p>
     <div class="callout">
-      <strong>In short:</strong> we do not sell your data. Most of your data (favorites, plans, progress, recorded trips) stays on your phone only.
-      The app is free and shows ads through <strong>Google AdMob</strong>, which may use your device's advertising ID.
+      <strong>In short:</strong> we do not sell your personal data. Most of your data (favorites, plans, progress, recorded trips) stays on your phone only.
+      The app is free and shows ads through the <strong>Start.io</strong> ad network, which may use your device's advertising ID,
+      and we use <strong>Firebase Analytics</strong> to learn how many people use the app and which features are used most.
     </div>
 
     <h2>1. Information we handle</h2>
@@ -196,7 +216,7 @@
     <h3>B) Location</h3>
     <p>
       With your permission, the app uses your precise or approximate location <strong>only while you use the app</strong> (not in the background) to show nearby places,
-      calculate distances, and power the map and navigation. We do not store your location on our servers. However, some features send coordinates to third-party services in order to work (see Section 3).
+      calculate distances, and power the map and navigation. We do not store your location on our servers. However, some features send coordinates to third-party services in order to work (see Section 4).
     </p>
 
     <h3>C) Camera — Driver Monitor feature</h3>
@@ -209,30 +229,45 @@
     <h3>D) Data sent to third parties</h3>
     <ul>
       <li><strong>Email for alerts (optional):</strong> if you enter your email to receive alerts and offers, it is sent to a Google Apps Script endpoint and stored in a Google Sheet owned by the developer. When you delete your account in the app, a deletion request with your email is sent so it can be removed.</li>
-      <li><strong>Advertising (Google AdMob):</strong> see Section 2.</li>
+      <li><strong>Advertising (Start.io):</strong> see Section 2.</li>
+      <li><strong>Analytics (Firebase Analytics):</strong> see Section 3.</li>
+      <li><strong>Push notifications (Firebase Cloud Messaging):</strong> see Section 4.</li>
     </ul>
 
-    <h2>2. Advertising — Google AdMob</h2>
+    <h2>2. Advertising — Start.io</h2>
     <p>
-      To keep the app free we show a Banner ad, an Interstitial ad, and a Rewarded Video ad through <strong>Google AdMob</strong>.
-      Google and its partners may automatically collect and process: your <strong>Advertising ID (GAID)</strong>, IP address, device and system information
-      (model, Android version, language, screen, carrier), ad interaction data (impressions, clicks) and diagnostics, to deliver personalized or non-personalized ads, measure performance, and prevent fraud.
-      Google may use cookies or similar identifiers for these purposes.
+      To keep the app free we show a Banner ad, an Interstitial ad, and a Rewarded Video ad through the <strong>Start.io</strong> ad network.
+      Start.io and its advertising partners may automatically collect and process: your <strong>Advertising ID (GAID)</strong>, IP address, device and system information
+      (model, Android version, language, screen, carrier), approximate location inferred from your IP address, ad interaction data (impressions, clicks) and diagnostics,
+      to deliver personalized or non-personalized ads, measure performance, and prevent fraud. These parties may use identifiers similar to cookies for these purposes.
     </p>
     <ul>
-      <li><strong>EEA, UK and Switzerland:</strong> ad requests are made only after your explicit consent. You can change your choice anytime in Settings → Privacy &amp; Ads Choices.</li>
+      <li><strong>EEA, UK and Switzerland:</strong> where the law requires it, personalized ads are shown only with your consent, and you can change your choice at any time.</li>
       <li>You can reset your advertising ID or opt out of ad personalization in Android settings (Google → Ads).</li>
-      <li>How Google uses data from partner apps: <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">https://policies.google.com/technologies/partner-sites</a></li>
-      <li>Data collected by AdMob: <a href="https://support.google.com/admob/answer/6128543" target="_blank" rel="noopener noreferrer">https://support.google.com/admob/answer/6128543</a></li>
-      <li>Google Privacy Policy: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">https://policies.google.com/privacy</a></li>
+      <li>Start.io Privacy Policy: <a href="https://www.start.io/policy/privacy-policy" target="_blank" rel="noopener noreferrer">https://www.start.io/policy/privacy-policy</a></li>
       <li>The rewarded-video benefit (a period free of interstitial ads) is granted only after the ad is watched to completion.</li>
     </ul>
 
-    <h2>3. Third-party services used by the app</h2>
+    <h2>3. Analytics — Firebase Analytics</h2>
+    <p>
+      We use <strong>Google Analytics for Firebase</strong> to understand how the app is used and to improve it. While you use the app, events are recorded automatically, such as:
+      app opens, session start and duration, the screens you open, and the features you use (for example the map, trip plans, navigation and favorites).
+      We use this to learn <strong>how many people open the app and how many are active users</strong>, and <strong>which features are most requested</strong> so we can improve them.
+    </p>
+    <ul>
+      <li>Technical information is also collected, such as an anonymous app-installation ID (App Instance ID), device model, Android version, language, approximate country/city (from your IP address), and possibly your advertising ID.</li>
+      <li>We do not use this data to identify you, and we do not link it to your name, email or phone number.</li>
+      <li>The data is processed by Google as a service provider. More information: <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">https://firebase.google.com/support/privacy</a></li>
+      <li>You can limit tracking by resetting your advertising ID or opting out of ad personalization in Android settings.</li>
+    </ul>
+
+    <h2>4. Third-party services used by the app</h2>
     <p>When you use the features below, your device connects to these providers, which receive your IP address and what is needed to fulfil the request. Each has its own privacy policy:</p>
     <table>
       <tr><th>Service</th><th>Purpose</th><th>What may be sent</th></tr>
-      <tr><td>Google AdMob</td><td>Advertising</td><td>Advertising ID, IP, device data, ad interaction</td></tr>
+      <tr><td>Start.io</td><td>Advertising</td><td>Advertising ID, IP, device data, ad interaction</td></tr>
+      <tr><td>Firebase Analytics (Google)</td><td>Usage statistics and user counts</td><td>Usage events, anonymous installation ID, device data, approximate location</td></tr>
+      <tr><td>Firebase Cloud Messaging (Google)</td><td>Push notifications, even when the app is closed</td><td>Device token and installation ID</td></tr>
       <tr><td>Google Play Services / Play Review</td><td>Location services, in-app rating, Google sign-in</td><td>As per Google's policy</td></tr>
       <tr><td>Google Sheets / Apps Script</td><td>Places &amp; alerts updates, email subscription</td><td>IP; email if you subscribe</td></tr>
       <tr><td>OpenStreetMap (tiles, Nominatim) &amp; Overpass</td><td>Map display and place search</td><td>Search text and map-area coordinates</td></tr>
@@ -242,7 +277,9 @@
       <tr><td>Pexels / Unsplash / Wikimedia</td><td>Place photos</td><td>Place name as search text</td></tr>
     </table>
     <p>
-      Links: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google</a> •
+      Links: <a href="https://www.start.io/policy/privacy-policy" target="_blank" rel="noopener noreferrer">Start.io</a> •
+      <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">Firebase</a> •
+      <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google</a> •
       <a href="https://wiki.osmfoundation.org/wiki/Privacy_Policy" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> •
       <a href="https://open-meteo.com/en/terms" target="_blank" rel="noopener noreferrer">Open-Meteo</a> •
       <a href="https://www.pexels.com/privacy-policy/" target="_blank" rel="noopener noreferrer">Pexels</a> •
@@ -250,48 +287,49 @@
       <a href="https://www.mapillary.com/privacy" target="_blank" rel="noopener noreferrer">Mapillary</a>
     </p>
 
-    <h2>4. Permissions the app requests</h2>
+    <h2>5. Permissions the app requests</h2>
     <ul>
       <li><strong>Location (precise/approximate):</strong> nearby places, map and navigation.</li>
       <li><strong>Camera:</strong> Driver Monitor only (on-device processing, nothing saved).</li>
       <li><strong>Notifications:</strong> alerts and the Driver Monitor service notification.</li>
       <li><strong>Display over other apps:</strong> Driver Monitor alerts while driving.</li>
       <li><strong>Internet &amp; network state, wake lock, vibration:</strong> maps, services and alerts.</li>
-      <li><strong>Advertising ID (AD_ID):</strong> advertising as described in Section 2.</li>
+      <li><strong>Advertising ID (AD_ID):</strong> advertising and analytics as described in Sections 2 and 3.</li>
     </ul>
     <p>You can revoke any permission at any time in your phone settings; the related feature may stop working.</p>
 
-    <h2>5. Sharing through other apps</h2>
+    <h2>6. Sharing through other apps</h2>
     <p>
       You can share places or your certificate via WhatsApp, Facebook, Instagram, Telegram or X. Sharing happens only when you tap, through Android's share sheet.
       The app only checks whether these apps are installed in order to show share buttons. Shared content is governed by those apps' policies.
     </p>
 
-    <h2>6. Retention and deletion</h2>
+    <h2>7. Retention and deletion</h2>
     <ul>
       <li>Local data stays on your device until you delete it or uninstall the app.</li>
       <li>Profile → "Delete account/data" erases all local data (databases, preferences, files, caches) and sends a deletion request for your email from the alerts list if you subscribed.</li>
       <li>You can also email <a href="mailto:morocobahia@gmail.com">morocobahia@gmail.com</a> to ask us to remove your email from our list.</li>
+      <li>Analytics and advertising data is retained by Firebase and Start.io under their own policies; you can ask us to request its deletion by emailing us, or reset your advertising ID.</li>
       <li>Android may back up app settings to your Google account depending on your phone's backup settings.</li>
     </ul>
 
-    <h2>7. Your rights</h2>
+    <h2>8. Your rights</h2>
     <p>
       Depending on your country's laws (e.g., EU GDPR, UK GDPR, California CCPA, Moroccan Law 09-08), you may have the right to access, correct and delete your data,
-      withdraw consent, and object to processing. We <strong>do not sell</strong> personal information. To exercise your rights, email us at the address below.
+      withdraw consent, and object to processing. We <strong>do not sell</strong> your personal data ourselves. To exercise your rights, email us at the address below.
       Residents of Morocco may also contact the CNDP (National Commission for the Control of Personal Data Protection).
     </p>
 
-    <h2>8. Children</h2>
+    <h2>9. Children</h2>
     <p>The app is not directed to children under 13 (or under 16 in some EU countries) and we do not knowingly collect their data. If you believe a child has provided data, contact us and we will delete it.</p>
 
-    <h2>9. Security</h2>
+    <h2>10. Security</h2>
     <p>We use encrypted connections (HTTPS) where possible and keep your core data on your device. No method of transmission or storage is 100% secure.</p>
 
-    <h2>10. Changes to this policy</h2>
+    <h2>11. Changes to this policy</h2>
     <p>We may update this policy; the last-updated date appears at the top. Continued use of the app after an update means you accept it.</p>
 
-    <h2>11. Contact us</h2>
+    <h2>12. Contact us</h2>
     <p>📧 <a href="mailto:morocobahia@gmail.com">morocobahia@gmail.com</a></p>
   </section>
 
